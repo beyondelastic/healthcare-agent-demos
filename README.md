@@ -1,7 +1,7 @@
 # Healthcare Agent Demos
 
-Two complementary, German-language demonstrations for healthcare CIOs
-and decision makers, using Azure and Microsoft Foundry. All patient records,
+Two complementary, German-language healthcare demonstrations
+using Azure and Microsoft Foundry. All patient records,
 institutions, and clinical documents in the application are intentionally
 fictional.
 
