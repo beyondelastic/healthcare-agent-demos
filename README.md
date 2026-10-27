@@ -14,6 +14,9 @@ fictional.
 [Klinik presenter script](docs/KLINIK-SCRIPT-DE.md) ·
 [Research presenter script](docs/RESEARCH-SCRIPT-DE.md)
 
+**Slides:** [German use-case and architecture deck](docs/slides/Healthcare-Agent-Demos-DE.pptx)
+— four editable slides, with speaker notes, covering both demonstrations.
+
 ## What is real, and what is simulated?
 
 Real: Foundry model and agent calls, clinical read-only function calls,
