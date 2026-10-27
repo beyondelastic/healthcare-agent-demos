@@ -1,0 +1,5 @@
+azure-ai-projects>=2.0.0,<3
+azure-identity>=1.21,<2
+httpx>=0.28,<1
+pytest>=8.3,<10
+python-dotenv>=1,<2

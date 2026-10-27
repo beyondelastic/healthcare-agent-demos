@@ -1,0 +1,67 @@
+# Operations and troubleshooting
+
+## Before each presentation
+
+- Rehearse as the actual presenter/test account, not only the resource builder.
+- Check Azure CLI authentication, model availability, network connectivity,
+  active Fabric capacity, and current tenant policies.
+- Confirm the clinical case is at the intended starting point and the research
+  conversation has an explicit baseline.
+- Keep original/source inspection available, but avoid admin portals and
+  credentials on the shared screen.
+- Budget for live response latency; do not show fabricated progress or claim
+  a fixed service response time.
+
+## Common failures
+
+| Symptom | Check / action |
+|---|---|
+| Clinical page shows an old letter | Local SQLite persists across restarts. Use explicit reset only when intended, or continue from the stored state. |
+| Agent unavailable or unauthorized | Check the configured tenant, project, deployment, agent version, and signed-in identity. Restart after `.env` changes. |
+| Clinical stale-source/conflict warning | Secure unsaved edits, load current state, and explicitly run/review again. Do not bypass revision checks. |
+| Scan action unavailable | Content Understanding endpoint/analyzer and permissions are required; skip the optional chapter if not configured. |
+| Scan case association fails | Inspect original and extracted fields. Do not force a mismatched report into the case. |
+| Fabric SQL verification fails | Inspect table-load and endpoint readiness, SQL access, capacity, and the actual reported error. Counts must match before agent setup. |
+| Missing cloud configuration | Complete the root `.env`; no sample tenant IDs are supplied. Process environment overrides `.env`. |
+| Teams request submitted to admin | Complete custom-app approval and user availability in the correct Microsoft 365 tenant. |
+| Teams says user cannot access agent | Check project-scoped Foundry Agent Consumer access as well as Teams app availability. |
+| Fabric workspace invisible | Check the intended tenant/account, workspace permission, licensing and feature entitlement. |
+| MCP enumeration error | Test direct Fabric as that same user first. Check data access; if direct Fabric works, investigate channel delegated authentication/consent. The generic error alone does not identify a root cause. |
+| Different cohort counts | Compare exact criteria, fixed dates, distinct patients vs. episodes, null semantics and retained conversation context against independent SQL. Do not patch answers with stored numbers. |
+| Agent refuses identifiers | Expected behavior; aggregate alternatives are allowed. This is not evidence of database-level row protection. |
+
+## Reset and recovery
+
+The clinical full-demo reset affects all three local cases, their current
+drafts/reviews/tasks and agent histories. The application stores a snapshot
+inside the same database, not an independent recovery backup, and has no restore
+UI. Raw upload blobs may remain in retained backups. Do not use reset as a
+privacy-deletion mechanism.
+
+Server restarts visibly fail interrupted jobs rather than silently replaying
+paid inference. A failed operation requires explicit review/retry; no failed
+cloud call is converted automatically to a rehearsal result.
+
+Research scripts record resource IDs and hashes in ignored
+`.local\research-deployment.json`. Keep it privately with the matching
+environment. Do not copy it to a different tenant or workspace.
+Changing agent instructions/setup can create a new agent version and affect
+an endpoint that routes to latest.
+
+## Costs and cleanup
+
+Clinical inference and scan extraction incur usage. Research consumes Fabric
+capacity, storage/query resources, and inference. Teams publishing can create
+additional Azure resources; inspect the actual resource inventory and billing.
+
+These scripts do not automatically suspend a capacity, unregister providers,
+remove role assignments, delete bots, or delete agents. After the event:
+
+1. Stop the local clinical server with Ctrl+C.
+2. Remove test-user access and app distribution when no longer needed.
+3. Suspend only an explicitly identified demo capacity after checking other
+   workloads; suspension affects the whole capacity.
+4. Review dedicated demo items/resources before deleting anything. Never use
+   broad subscription/resource-group cleanup against shared infrastructure.
+5. Retain or remove local synthetic runtime files under your own retention
+   policy. Keep all credentials and runtime output out of source control.

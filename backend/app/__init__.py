@@ -1,0 +1,1 @@
+"""Synthetic hospital documentation demonstration."""
