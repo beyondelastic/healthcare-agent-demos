@@ -3,6 +3,15 @@
 A separate, conversational R&D demo for German university hospitals. The
 clinical documentation cockpit is unchanged.
 
+**Positioning:** Forschungsnavigator demonstrates conversational **cohort
+feasibility analysis for clinical trials** (cohort discovery): testing study
+inclusion and exclusion criteria against structured data before recruitment
+begins. It applies criteria, counts distinct patients, refines criteria step by
+step, separates missing data from known exclusions, and can compare synthetic
+sites. It does **not** identify individual recruitment candidates, perform
+patient pre-screening, check consent or contact rules, or estimate expected
+enrolment or statistical power. Results are aggregate only.
+
 The reference Foundry prompt agent **research-feasibility** used a **gpt-5.5**
 deployment and a native **Fabric IQ (preview)** tool. Fabric's published
 **research_cohort_agent_v2** queries the dedicated

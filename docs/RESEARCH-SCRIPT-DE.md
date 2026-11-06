@@ -5,6 +5,28 @@
 **Geschichte:** Eine Studienidee durch explizite Kriterien gegen synthetische
 Daten pruefen, statt vorab Excel-Auswertungen anzufordern.
 
+## Einordnung
+
+**Der Forschungsnavigator zeigt eine konversationelle Kohortenanalyse zur
+Machbarkeitspruefung klinischer Studien: Studienkriterien werden vor Beginn
+der Rekrutierung gegen strukturierte Daten geprueft.**
+
+| Teil einer Studien-Kohortenanalyse | In der Demo? |
+|---|---|
+| Ein- und Ausschlusskriterien anwenden | Ja |
+| Unterschiedliche Patienten zaehlen | Ja |
+| Kriterien schrittweise verfeinern | Ja |
+| Fehlende Daten von bekannten Ausschluessen trennen | Ja |
+| Synthetische Standorte vergleichen | Optional |
+| Zeigen, welche Kriterien die Kohorte am staerksten reduzieren | Auf Nachfrage |
+| Einzelne Kandidaten fuer die Rekrutierung identifizieren | **Nein** |
+| Einwilligung, Kontaktregeln oder aerztliche Beurteilung pruefen | **Nein** |
+| Erwartete Rekrutierung oder statistische Power schaetzen | **Nein** |
+
+Abgrenzung: Rekrutierung bzw. Pre-Screening prueft konkrete Patientenakten,
+um zu entscheiden, wer angesprochen wird. Die Demo bleibt bewusst auf der
+frueheren, aggregierten Machbarkeitsstufe.
+
 ## 1. Einstieg und Grundgesamtheit
 
 Sagen: **"Wir arbeiten mit 10.000 erfundenen Patienten an drei erfundenen
