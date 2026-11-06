@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fragen zu Ihrem Entlassbrief</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="phone">
+    <section class="top">
+      <div class="hospital" id="hospital"></div>
+      <h1 id="title"></h1>
+      <div class="patient-card">
+        <strong id="patient-name"></strong>
+        <span id="discharge"></span>
+        <span class="approved">✓ <span id="approved"></span></span>
+      </div>
+    </section>
+    <div class="demo-note" id="demo-note"></div>
+
+    <nav class="languages" id="languages" aria-label="Sprache"></nav>
+
+    <section class="talk">
+      <button class="mic" id="mic" aria-label="Start">🎙️</button>
+      <div class="mic-label" id="mic-label"></div>
+      <div class="status" id="status" role="status"></div>
+    </section>
+
+    <section class="conversation" id="conversation" aria-live="polite">
+      <div class="hint" id="hint"></div>
+    </section>
+
+    <form class="ask" id="ask">
+      <input id="question" autocomplete="off">
+      <button type="submit" id="send"></button>
+    </form>
+
+    <footer class="foot">
+      <span class="sos" id="sos"></span>
+      <span id="disclaimer"></span>
+      <button type="button" id="show-letter"></button>
+    </footer>
+  </main>
+
+  <dialog id="letter">
+    <div class="dialog-head"><strong id="letter-title"></strong><button type="button" id="close-letter" aria-label="Schließen">×</button></div>
+    <div class="dialog-body" id="letter-body"></div>
+  </dialog>
+
+  <script src="/static/patient.js"></script>
+</body>
+</html>

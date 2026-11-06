@@ -1,0 +1,55 @@
+{
+  "_hinweis": "Vollstaendig fiktiver Demo-Entlassbrief. Keine reale Person, keine reale Behandlung, keine medizinische Empfehlung.",
+  "letter_id": "DEMO-EB-2026-1106",
+  "hospital": "Universitätsklinikum Musterstadt (fiktiv)",
+  "department": "Klinik für Allgemein- und Viszeralchirurgie",
+  "patient": {
+    "name": "Elena Novak",
+    "date_of_birth": "14.03.1959",
+    "case_id": "DEMO-4711"
+  },
+  "admission_date": "03.11.2026",
+  "discharge_date": "06.11.2026",
+  "approval": {
+    "approved_by": "Dr. med. Demo Ärztin (fiktiv), Oberärztin",
+    "approved_at": "06.11.2026, 09:40 Uhr",
+    "status": "ärztlich freigegeben"
+  },
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Grund des Aufenthalts und Behandlung",
+      "text": "Sie wurden am 03.11.2026 wegen Gallensteinen mit wiederkehrenden Oberbauchschmerzen aufgenommen (Diagnose: symptomatische Cholezystolithiasis). Am 04.11.2026 wurde Ihre Gallenblase in einer Schlüsselloch-Operation entfernt (laparoskopische Cholezystektomie). Die Operation und der Verlauf waren ohne Komplikationen. Sie werden am 06.11.2026 nach Hause entlassen."
+    },
+    {
+      "id": "medication",
+      "title": "Medikamente nach der Entlassung",
+      "text": "1. Ibuprofen 400 mg: nur bei Schmerzen, bis zu 3-mal täglich 1 Tablette zu einer Mahlzeit, höchstens 5 Tage lang. 2. Pantoprazol 20 mg (Magenschutz): 1 Tablette morgens vor dem Frühstück, solange Sie Ibuprofen einnehmen. 3. Ramipril 5 mg (Ihr Blutdruckmedikament von zu Hause): unverändert weiter 1 Tablette morgens. Neue Medikamente oder Änderungen bitte nur nach Rücksprache mit Ihrer Hausarztpraxis oder der Klinik."
+    },
+    {
+      "id": "appointments",
+      "title": "Termine und Nachsorge",
+      "text": "Wundkontrolle in Ihrer Hausarztpraxis in 3 bis 4 Tagen, also am Montag, 09.11.2026, oder Dienstag, 10.11.2026. Bitte vereinbaren Sie diesen Termin selbst. Nachsorgetermin in der Chirurgischen Ambulanz am Dienstag, 24.11.2026, um 10:30 Uhr, Gebäude A, Ebene 2. Die Hautfäden sind selbstauflösend und müssen nicht gezogen werden."
+    },
+    {
+      "id": "pending_results",
+      "title": "Ausstehende Befunde",
+      "text": "Die feingewebliche Untersuchung der entfernten Gallenblase (Histologie) ist noch nicht abgeschlossen. Das Ergebnis wird Ihrer Hausarztpraxis zugeschickt und beim Nachsorgetermin am 24.11.2026 mit Ihnen besprochen."
+    },
+    {
+      "id": "daily_life",
+      "title": "Verhalten im Alltag",
+      "text": "Duschen ist erlaubt; tupfen Sie die Wunden danach trocken. Bitte 2 Wochen nicht baden, nicht schwimmen und nicht in die Sauna gehen. Heben Sie 2 Wochen lang nichts, was schwerer als 5 kg ist. Autofahren erst, wenn Sie schmerzfrei sind und sich sicher fühlen. Sie können normal essen; sehr fettreiche Speisen in den ersten Tagen eher meiden."
+    },
+    {
+      "id": "warning_signs",
+      "title": "Warnzeichen",
+      "text": "Melden Sie sich umgehend bei Ihrer Hausarztpraxis oder der Chirurgischen Ambulanz bei: Fieber über 38,5 Grad, zunehmenden Bauchschmerzen, Gelbfärbung von Haut oder Augen, Rötung, Schwellung oder Flüssigkeit an den Wunden, anhaltendem Erbrechen. Bei plötzlichen starken Beschwerden wie Atemnot, Brustschmerzen, sehr starken Bauchschmerzen oder Bewusstseinsstörungen rufen Sie sofort den Notruf 112."
+    },
+    {
+      "id": "contacts",
+      "title": "Kontakt",
+      "text": "Chirurgische Ambulanz: Montag bis Freitag, 8 bis 16 Uhr, Telefon 0000 000000-100 (Demo-Nummer). Außerhalb dieser Zeiten: ärztlicher Bereitschaftsdienst 116 117. Im Notfall: 112."
+    }
+  ]
+}

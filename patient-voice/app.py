@@ -1,0 +1,295 @@
+"""Patient discharge voice assistant: FastAPI between the browser and the Foundry voice agent.
+
+    browser (mic, speaker, transcript)  <-- /ws -->  app.py  <-- realtime -->  Foundry voice agent
+
+- The browser streams microphone audio (PCM16 mono, 24 kHz) or typed questions to /ws.
+- app.py forwards them to the voice agent and streams the spoken reply back.
+- Tool calls (approved-letter retrieval, staff callback) are executed here, in tools.py.
+
+The Entra ID credential stays on the server; no token reaches the browser.
+
+    uvicorn app:app --port 8010
+"""
+
+import asyncio
+import io
+import json
+from contextlib import asynccontextmanager
+from pathlib import Path
+
+import segno
+from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import (
+    RealtimeConversationItemFunctionCallOutput,
+    RealtimeConversationItemMessageSystem,
+    RealtimeConversationItemMessageSystemContent,
+    RealtimeConversationItemMessageUser,
+    RealtimeConversationItemMessageUserContent,
+    RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
+    RealtimeServerEventError,
+    RealtimeServerEventInputAudioBufferSpeechStarted,
+    RealtimeServerEventResponseAudioDelta,
+    RealtimeServerEventResponseAudioTranscriptDone,
+    RealtimeServerEventResponseCreated,
+    RealtimeServerEventResponseDone,
+    RealtimeServerEventResponseFunctionCallArgumentsDone,
+)
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
+from starlette.websockets import WebSocketState
+
+import settings
+import tools
+
+STATIC = Path(__file__).parent / "static"
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with (
+        settings.async_credential() as credential,
+        AIProjectClient(endpoint=settings.ENDPOINT, credential=credential, allow_preview=True) as client,
+    ):
+        app.state.client = client
+        yield
+
+
+app = FastAPI(lifespan=lifespan)
+app.mount("/static", StaticFiles(directory=STATIC), name="static")
+
+
+@app.get("/")
+async def letter_page():
+    return FileResponse(STATIC / "letter.html")
+
+
+@app.get("/patient")
+async def patient_page():
+    return FileResponse(STATIC / "patient.html")
+
+
+@app.get("/team")
+async def staff_page():
+    return FileResponse(STATIC / "staff.html")
+
+
+@app.get("/api/letter")
+async def letter():
+    """Full approved letter for the printable page and the patient's own view."""
+    return tools.LETTER
+
+
+@app.get("/api/languages")
+async def languages():
+    return [{"code": code, "name": name} for code, (name, _) in settings.LANGUAGES.items()]
+
+
+@app.get("/api/qr.svg")
+async def qr_code():
+    url = f"{settings.PUBLIC_BASE_URL}/patient?brief={tools.LETTER['letter_id']}"
+    buffer = io.BytesIO()
+    segno.make(url, error="m").save(buffer, kind="svg", scale=6, border=2, dark="#0b3a53")
+    return Response(buffer.getvalue(), media_type="image/svg+xml", headers={"X-Target-Url": url})
+
+
+@app.get("/api/staff")
+async def staff():
+    return tools.staff_view()
+
+
+@app.post("/api/staff/{request_id}/done")
+async def complete_request(request_id: str):
+    for request in tools.REQUESTS:
+        if request["id"] == request_id:
+            request["status"] = "erledigt"
+            return request
+    raise HTTPException(404, "Unknown request")
+
+
+@app.post("/api/reset")
+async def reset():
+    tools.reset()
+    return {"ok": True}
+
+
+def system_item(text: str):
+    return RealtimeConversationItemMessageSystem(
+        content=[RealtimeConversationItemMessageSystemContent(type="input_text", text=text)])
+
+
+def language_context(code: str) -> str:
+    name = settings.LANGUAGES[code][0]
+    patient = tools.LETTER["patient"]["name"]
+    return (f"The patient selected {name} in the app. Start in {name}, but always answer in the language "
+            f"of the patient's most recent message. The approved discharge letter belongs to {patient}.")
+
+
+MAX_RECONNECTS = 3
+
+
+def resume_context(session_id: str) -> str:
+    """Context for a replacement voice session after the realtime connection dropped."""
+    session = tools.SESSIONS.get(session_id, {})
+    recent = session.get("transcript", [])[-12:]
+    lines = "\n".join(f"{'Patient' if line['role'] == 'patient' else 'Assistant'}: {line['text']}" for line in recent)
+    return (language_context(session.get("language", "de")) + " The connection was briefly interrupted. "
+            "Continue the same conversation: do not greet again and do not repeat earlier answers unless asked. "
+            "Earlier statements still need the approved letter: call get_discharge_information again before "
+            "answering letter questions.\nRecent conversation:\n" + (lines or "(none)"))
+
+
+@app.websocket("/ws")
+async def voice_session(browser: WebSocket):
+    await browser.accept()
+    language = browser.query_params.get("lang", "de")
+    if language not in settings.LANGUAGES:
+        language = "de"
+    greet = browser.query_params.get("greet", "1") != "0"
+    session_id = tools.start_session(language)
+    client: AIProjectClient = app.state.client
+    state = {"response_active": False, "respond_after": False, "session": session_id}
+    reconnects = 0
+    try:
+        await browser.send_json({"type": "config", "channels": 1, "session": session_id})
+        while True:
+            try:
+                async with client.beta.voice_agents.realtime.connect(agent_name=settings.AGENT_NAME) as agent:
+                    state.update(response_active=False, respond_after=False)
+                    if reconnects:
+                        await agent.conversation.item.create(item=system_item(resume_context(session_id)))
+                    elif greet:
+                        await agent.conversation.item.create(item=system_item(
+                            language_context(language) + " Greet the patient in one short sentence, say you can "
+                            "explain the discharge letter, and ask what they would like to know."))
+                        await request_response(agent, state)
+                    else:
+                        await agent.conversation.item.create(item=system_item(language_context(language)))
+                    await browser.send_json({"type": "status", "text": "reconnected" if reconnects else "connected"})
+                    inbound = asyncio.create_task(browser_to_agent(browser, agent, state))
+                    outbound = asyncio.create_task(agent_to_browser(agent, browser, state))
+                    await asyncio.wait({inbound, outbound}, return_when=asyncio.FIRST_COMPLETED)
+                    if inbound.done():
+                        # The browser hung up (or failed): end the session.
+                        outbound.cancel()
+                        exc = inbound.exception()
+                        if exc and not isinstance(exc, WebSocketDisconnect):
+                            raise exc
+                        return
+                    # The realtime connection ended or failed while the browser is still open.
+                    inbound.cancel()
+                    await asyncio.gather(inbound, return_exceptions=True)
+                    if outbound.exception():
+                        raise outbound.exception()
+                    raise ConnectionResetError("The realtime connection closed.")
+            except WebSocketDisconnect:
+                return
+            except Exception as exc:
+                if browser.client_state != WebSocketState.CONNECTED or reconnects >= MAX_RECONNECTS:
+                    raise
+                reconnects += 1
+                print(f"Realtime connection lost ({exc!r}); reconnect {reconnects}/{MAX_RECONNECTS}")
+                await browser.send_json({"type": "status", "text": "reconnecting"})
+                await asyncio.sleep(1)
+    except Exception as exc:
+        print(f"Session error: {exc!r}")
+        await safe_send(browser, {"type": "error", "text": str(exc)})
+    finally:
+        await safe_send(browser, {"type": "status", "text": "ended"})
+        try:
+            await browser.close()
+        except RuntimeError:
+            pass
+
+
+async def safe_send(browser: WebSocket, message: dict):
+    try:
+        await browser.send_json(message)
+    except (WebSocketDisconnect, RuntimeError):
+        pass
+
+
+async def request_response(agent, state: dict):
+    """Start a response now, or right after the active one finishes (only one may run at a time)."""
+    if state["response_active"]:
+        state["respond_after"] = True
+    else:
+        state["response_active"] = True
+        await agent.response.create()
+
+
+async def browser_to_agent(browser: WebSocket, agent, state: dict):
+    """Forward microphone audio, typed questions, and language changes to the voice agent."""
+    while True:
+        message = await browser.receive()
+        if message["type"] == "websocket.disconnect":
+            raise WebSocketDisconnect(message.get("code", 1000))
+        if message.get("bytes"):
+            await agent.input_audio_buffer.append(audio=message["bytes"])
+            continue
+        data = json.loads(message.get("text") or "{}")
+        if data.get("type") == "text" and data.get("text", "").strip():
+            text = data["text"].strip()[:1000]
+            tools.log(state["session"], "patient", text, channel="text")
+            await agent.conversation.item.create(item=RealtimeConversationItemMessageUser(
+                content=[RealtimeConversationItemMessageUserContent(type="input_text", text=text)]))
+            await request_response(agent, state)
+        elif data.get("type") == "language" and data.get("code") in settings.LANGUAGES:
+            tools.set_language(state["session"], data["code"])
+            await agent.conversation.item.create(item=system_item(
+                language_context(data["code"]) + " Briefly confirm the language change in one sentence."))
+            await request_response(agent, state)
+
+
+async def agent_to_browser(agent, browser: WebSocket, state: dict):
+    """Relay agent events to the browser and execute function tool calls."""
+    pending_outputs = []
+    async for event in agent:
+        if isinstance(event, RealtimeServerEventResponseAudioDelta):
+            await browser.send_bytes(event.delta)
+
+        elif isinstance(event, RealtimeServerEventResponseCreated):
+            state["response_active"] = True
+            await browser.send_json({"type": "response_started"})
+
+        elif isinstance(event, RealtimeServerEventInputAudioBufferSpeechStarted):
+            await browser.send_json({"type": "interrupt"})
+            if state["response_active"]:
+                await agent.response.cancel()
+
+        elif isinstance(event, RealtimeServerEventConversationItemInputAudioTranscriptionCompleted):
+            text = (event.transcript or "").strip()
+            tools.log(state["session"], "patient", text)
+            await browser.send_json({"type": "transcript", "role": "patient", "text": text})
+
+        elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
+            tools.log(state["session"], "assistant", event.transcript)
+            await browser.send_json({"type": "transcript", "role": "assistant", "text": event.transcript})
+
+        elif isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
+            try:
+                args = json.loads(event.arguments or "{}")
+            except json.JSONDecodeError:
+                args = {}
+            result = tools.run_tool(event.name, args, session_id=state["session"])
+            print(f"Tool call: {event.name}({args}) -> ok={result.get('ok')}")
+            pending_outputs.append((event.call_id, result))
+            await browser.send_json({"type": "tool", "name": event.name, "args": args, "result": result})
+
+        elif isinstance(event, RealtimeServerEventResponseDone):
+            state["response_active"] = False
+            if pending_outputs:
+                for call_id, result in pending_outputs:
+                    await agent.conversation.item.create(item=RealtimeConversationItemFunctionCallOutput(
+                        call_id=call_id, output=json.dumps(result, ensure_ascii=False)))
+                pending_outputs.clear()
+                state["respond_after"] = True
+            if state["respond_after"]:
+                state["respond_after"] = False
+                await request_response(agent, state)
+
+        elif isinstance(event, RealtimeServerEventError):
+            if event.error.code == "response_cancel_not_active":
+                continue
+            print(f"Agent error: {event.error.message}")
+            await browser.send_json({"type": "error", "text": event.error.message})

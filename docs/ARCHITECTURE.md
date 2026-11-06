@@ -66,6 +66,29 @@ authorization independently. Workspace Viewer is a broad read role across
 workspace items, not an aggregate-only database restriction. Agent refusal of
 individual identifiers is a behavior guardrail, not a security guarantee.
 
+## Patient voice assistant (Entlass-Assistent)
+
+```mermaid
+flowchart LR
+    P[Patient browser: voice or text] <-- WebSocket --> R[FastAPI relay on loopback]
+    R <-- realtime voice session, Entra ID --> V[Foundry voice agent: managed realtime model]
+    R --> T[Function tools: approved letter, callback requests]
+    T --> S[Care-team view]
+```
+
+The patient opens the page from a QR code on the approved discharge letter
+(identity check simulated). The voice agent has no letter content in its
+instructions: it must call `get_discharge_information` for approved sections
+and may only rephrase or translate them. Medication changes, questions the
+letter doesn't answer, and warning signs create callback requests with a German
+summary; acute danger signs trigger an immediate 112 instruction. The browser
+never receives a token; the relay holds the credential, executes the tools, and
+reconnects automatically if the realtime connection drops.
+
+Spoken translations are not clinically validated. Production use would need
+patient-portal identity, letters from the hospital system, a real ward worklist,
+clinically approved emergency wording, and HTTPS access for phones.
+
 ## Before any real hospital use
 
 Separately design and approve clinical ownership and intended purpose,

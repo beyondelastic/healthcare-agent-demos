@@ -1,6 +1,6 @@
 # Healthcare Agent Demos
 
-Two complementary, German-language healthcare demonstrations
+Three complementary, German-language healthcare demonstrations
 using Azure and Microsoft Foundry. All patient records,
 institutions, and clinical documents in the application are intentionally
 fictional.
@@ -8,23 +8,27 @@ fictional.
 | Demo | Business story | Presentation surface |
 |---|---|---|
 | **Klinik Cockpit / Klinik Studio** | Assemble discharge documentation from traceable sources, handle a missing medication plan, and follow a late report with human approval gates. | Local German web cockpit and simulated blue KIS |
-| **Forschungsnavigator** | Explore study feasibility, refine inclusion criteria conversationally, and distinguish missing data from exclusions. | Foundry playground or published Teams agent |
+| **Forschungsnavigator** | Trial cohort feasibility: refine inclusion criteria conversationally and distinguish missing data from exclusions. | Foundry playground or published Teams agent |
+| **Entlass-Assistent** | A patient scans the QR code on the approved discharge letter and asks questions by voice in their own language; open questions go to the care team. | Patient web page (voice or text) and care-team view |
 
 **Start here:** [90-minute session guide](docs/SESSION-DE.md) ·
 [Klinik presenter script](docs/KLINIK-SCRIPT-DE.md) ·
-[Research presenter script](docs/RESEARCH-SCRIPT-DE.md)
+[Research presenter script](docs/RESEARCH-SCRIPT-DE.md) ·
+[Voice presenter script](patient-voice/DEMO-SCRIPT-DE.md)
 
 **Slides:** [German use-case and architecture deck](docs/slides/Healthcare-Agent-Demos-DE.pptx)
-— four editable slides, with speaker notes, covering both demonstrations.
+— six editable slides, with speaker notes, covering all three demonstrations.
 
 ## What is real, and what is simulated?
 
 Real: Foundry model and agent calls, clinical read-only function calls,
 Azure Content Understanding scan extraction, Fabric Lakehouse tables and live
-queries, Teams publication and signed-in access.
+queries, Teams publication and signed-in access, and the Foundry voice agent
+(realtime speech, multilingual voice, function tools).
 
 Simulated: hospital source systems, clinical cases, medication release,
-laboratory publication, task assignments, approval and KIS write-back.
+laboratory publication, task assignments, approval and KIS write-back, the
+patient portal and QR identity check, and care-team notification.
 Research data is deterministic and wholly synthetic. There is no real EHR
 connection, clinical decision making, patient recruitment, or consent assessment.
 
@@ -47,6 +51,8 @@ additional Content Understanding configuration.
 
 For research, follow [research setup and Teams publishing](docs/RESEARCH-SETUP.md)
 and the [research technical reference](research/README.md).
+For the voice demo, follow [patient-voice/README.md](patient-voice/README.md); it is
+independent of the cockpit and runs on port 8010.
 There is no one-command Azure provisioning or preconfigured shared tenant.
 
 ## Repository map
@@ -55,6 +61,7 @@ There is no one-command Azure provisioning or preconfigured shared tenant.
 backend/                 Clinical API, agent tools, synthetic cases, tests
 frontend/                German cockpit and simulated KIS
 research/                Synthetic generator, Fabric/Foundry setup and checks
+patient-voice/           Voice agent for discharge-letter questions, patient and care-team pages
 docs/                    Presenter scripts, setup, architecture and operations
 .env.example             Configuration template; contains no credentials
 Start-Cockpit.ps1         Local clinical startup

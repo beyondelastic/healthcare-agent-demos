@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Behandlungsteam · Rückfragen</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="staff">
+    <header>
+      <div>
+        <h1>Rückfragen aus dem Entlass-Assistenten</h1>
+        <div class="sub">Station Allgemein- und Viszeralchirurgie · fiktive Demo · aktualisiert automatisch</div>
+      </div>
+      <button id="reset" type="button">Demo zurücksetzen</button>
+    </header>
+    <div class="columns">
+      <section class="panel">
+        <h2>Rückrufanfragen</h2>
+        <div id="requests"></div>
+      </section>
+      <section class="panel">
+        <h2>Gespräche</h2>
+        <div id="sessions"></div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const LANG = { de: "Deutsch", en: "Englisch", tr: "Türkisch", ar: "Arabisch", uk: "Ukrainisch" };
+    const CATEGORY = { medication: "Medikation", appointment: "Termin", symptoms: "Beschwerden", pending_result: "Ausstehender Befund", other: "Sonstiges" };
+    const URGENCY = { emergency: "Notfall · 112 empfohlen", urgent: "Dringend", routine: "Routine" };
+    const SECTION = { overview: "Behandlung", medication: "Medikamente", appointments: "Termine", pending_results: "Befunde", daily_life: "Alltag", warning_signs: "Warnzeichen", contacts: "Kontakt" };
+    const time = (ts) => new Date(ts * 1000).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+
+    async function refresh() {
+      const data = await (await fetch("/api/staff")).json();
+      const requests = document.getElementById("requests");
+      requests.innerHTML = "";
+      if (!data.requests.length) requests.appendChild(el("div", "empty", "Noch keine Rückfragen."));
+      for (const r of data.requests) {
+        const card = el("div", `card ${r.urgency}${r.status === "erledigt" ? " done" : ""}`);
+        const head = el("div", "card-head");
+        head.append(el("strong", "", `${CATEGORY[r.category] || r.category} · ${r.patient} (${r.case_id})`), el("span", `pill ${r.urgency}`, URGENCY[r.urgency]));
+        card.append(head, el("div", "summary", r.summary_de), el("div", "quote", `Originalfrage (${LANG[r.language] || r.language}): „${r.patient_question}“`));
+        const meta = el("div", "meta");
+        meta.append(el("span", "", `Anfrage ${r.id} · ${time(r.created)} · ${r.status}`));
+        if (r.status !== "erledigt") {
+          const done = el("button", "", "Als erledigt markieren");
+          done.onclick = async () => { await fetch(`/api/staff/${r.id}/done`, { method: "POST" }); refresh(); };
+          meta.appendChild(done);
+        }
+        card.appendChild(meta);
+        requests.appendChild(card);
+      }
+
+      const sessions = document.getElementById("sessions");
+      const open = new Set([...sessions.querySelectorAll("details[open]")].map((d) => d.dataset.id));
+      sessions.innerHTML = "";
+      if (!data.sessions.length) sessions.appendChild(el("div", "empty", "Noch keine Gespräche."));
+      for (const s of data.sessions) {
+        const card = el("div", "card");
+        const questions = s.transcript.filter((line) => line.role === "patient").length;
+        card.append(el("strong", "", `${LANG[s.language] || s.language} · ${time(s.started)}`), el("div", "quote", `${questions} Frage(n) · ${s.requests.length} Rückfrage(n) ans Team`));
+        const tags = el("div", "tags");
+        s.sources.forEach((id) => tags.appendChild(el("span", "", `📄 ${SECTION[id] || id}`)));
+        card.appendChild(tags);
+        const details = el("details");
+        details.dataset.id = s.id;
+        details.open = open.has(s.id);
+        details.appendChild(el("summary", "", "Gesprächsverlauf (Originalsprache)"));
+        for (const line of s.transcript) {
+          const p = el("div", "line");
+          p.append(el("b", "", line.role === "patient" ? "Patientin: " : "Assistent: "), line.text);
+          details.appendChild(p);
+        }
+        card.appendChild(details);
+        sessions.appendChild(card);
+      }
+    }
+    document.getElementById("reset").onclick = async () => {
+      if (confirm("Alle Demo-Gespräche und Rückfragen löschen?")) { await fetch("/api/reset", { method: "POST" }); refresh(); }
+    };
+    refresh();
+    setInterval(refresh, 3000);
+  </script>
+</body>
+</html>

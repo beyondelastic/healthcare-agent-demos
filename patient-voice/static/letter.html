@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entlassbrief (fiktiv)</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <article class="sheet">
+    <div class="letterhead">
+      <div><h1 id="hospital"></h1><div class="dept" id="department"></div></div>
+      <div class="letter-meta" id="meta"></div>
+    </div>
+    <h2>Entlassbrief für Patientinnen und Patienten</h2>
+    <div class="patient-line" id="patient-line"></div>
+    <div id="sections"></div>
+    <div class="signature" id="signature"></div>
+
+    <div class="qr-box">
+      <img id="qr" src="/api/qr.svg" alt="QR-Code zum Sprachassistenten">
+      <div>
+        <h4>Fragen zu diesem Brief? Fragen Sie in Ihrer Sprache.</h4>
+        <p>Scannen Sie den Code mit Ihrem Smartphone. Der Sprachassistent erklärt Ihnen diesen ärztlich freigegebenen Brief und leitet Fragen an Ihr Behandlungsteam weiter.</p>
+        <div class="qr-langs">Deutsch · English · Türkçe · العربية · Українська</div>
+        <a class="open-link" id="open" href="/patient">Assistent öffnen</a>
+      </div>
+    </div>
+    <div class="fiction">Fiktiver Demo-Brief. Keine reale Person, keine reale Behandlung.</div>
+  </article>
+  <script>
+    fetch("/api/letter").then((r) => r.json()).then((l) => {
+      const set = (id, text) => (document.getElementById(id).textContent = text);
+      set("hospital", l.hospital);
+      set("department", l.department);
+      document.getElementById("meta").innerHTML = "";
+      for (const line of [`Fall-Nr. ${l.patient.case_id}`, `Aufnahme ${l.admission_date}`, `Entlassung ${l.discharge_date}`]) {
+        const div = document.createElement("div"); div.textContent = line; document.getElementById("meta").appendChild(div);
+      }
+      set("patient-line", `${l.patient.name}, geb. ${l.patient.date_of_birth}`);
+      for (const s of l.sections) {
+        const h = document.createElement("h3"); h.textContent = s.title;
+        const p = document.createElement("p"); p.textContent = s.text;
+        document.getElementById("sections").append(h, p);
+      }
+      set("signature", `${l.approval.status}: ${l.approval.approved_by}, ${l.approval.approved_at}`);
+      document.getElementById("open").href = `/patient?brief=${encodeURIComponent(l.letter_id)}`;
+    });
+  </script>
+</body>
+</html>
