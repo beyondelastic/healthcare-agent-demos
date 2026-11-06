@@ -11,7 +11,7 @@ konkrete Aufgaben zeigen. Technik nur zur Einordnung oeffnen.
 | 0-10 Min. | Ziele, heutige Medienbrueche, Erwartungen der Teilnehmenden |
 | 10-20 Min. | Agentenprinzip: Quellen, Werkzeuge, Identitaet, menschliche Verantwortung |
 | 20-35 Min. | [Klinik Cockpit: Entlassdokumentation](KLINIK-SCRIPT-DE.md), Kapitel A |
-| 35-45 Min. | [Entlass-Assistent: Fragen zum Brief per Sprache](../patient-voice/DEMO-SCRIPT-DE.md) |
+| 35-45 Min. | [Entlass-Assistent: Fragen zum Brief per Sprache](VOICE-SCRIPT-DE.md) |
 | 45-60 Min. | [Forschungsnavigator in Teams](RESEARCH-SCRIPT-DE.md) |
 | 60-70 Min. | Architektur, Zugriffsrechte, Betrieb und Grenzen |
 | 70-90 Min. | Diskussion: eigener Pilot, fachliche Verantwortung, Erfolgskriterien |

@@ -14,7 +14,7 @@ fictional.
 **Start here:** [90-minute session guide](docs/SESSION-DE.md) ·
 [Klinik presenter script](docs/KLINIK-SCRIPT-DE.md) ·
 [Research presenter script](docs/RESEARCH-SCRIPT-DE.md) ·
-[Voice presenter script](patient-voice/DEMO-SCRIPT-DE.md)
+[Voice presenter script](docs/VOICE-SCRIPT-DE.md)
 
 **Slides:** [German use-case and architecture deck](docs/slides/Healthcare-Agent-Demos-DE.pptx)
 — six editable slides, with speaker notes, covering all three demonstrations.
@@ -51,7 +51,7 @@ additional Content Understanding configuration.
 
 For research, follow [research setup and Teams publishing](docs/RESEARCH-SETUP.md)
 and the [research technical reference](research/README.md).
-For the voice demo, follow [patient-voice/README.md](patient-voice/README.md); it is
+For the voice demo, follow [voice setup](docs/VOICE-SETUP.md) and the [voice technical reference](patient-voice/README.md); it is
 independent of the cockpit and runs on port 8010.
 There is no one-command Azure provisioning or preconfigured shared tenant.
 

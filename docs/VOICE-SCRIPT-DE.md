@@ -1,12 +1,13 @@
 # Entlass-Assistent: Vorführskript
 
 **Dauer:** ca. 8–10 Minuten · **Rollen:** Patientin (Sie) und Behandlungsteam (zweiter Tab)
+**Vorbereitung:** [technisches Setup](VOICE-SETUP.md) · Code: [patient-voice/](../patient-voice/README.md)
 **Botschaft:** *Ärztinnen und Ärzte verantworten den Inhalt. KI macht freigegebene Information
 in der Sprache der Patientin verständlich – ohne neue medizinische Entscheidungen.*
 
 ## Vorbereitung (vor der Sitzung)
 
-1. `.\Start-VoiceDemo.ps1` starten; Edge oder Chrome, Mikrofon/Headset prüfen.
+1. Im Ordner `patient-voice` `.\Start-VoiceDemo.ps1` starten; Edge oder Chrome, Mikrofon/Headset prüfen.
 2. Tab 1: <http://127.0.0.1:8010/> (Brief mit QR-Code).
    Tab 2: <http://127.0.0.1:8010/team> → **Demo zurücksetzen**.
 3. Einmal kurz durchsprechen (Sprachqualität, Lautstärke, Antwortzeit).

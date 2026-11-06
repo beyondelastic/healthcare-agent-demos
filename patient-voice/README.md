@@ -37,7 +37,7 @@ Typing works as well as speaking, useful for noisy rooms.
 - The agent answers in the language of the patient's latest message; the language buttons only
   set the starting language and the page labels.
 
-German presenter script: [DEMO-SCRIPT-DE.md](DEMO-SCRIPT-DE.md).
+German presenter script: [docs/VOICE-SCRIPT-DE.md](../docs/VOICE-SCRIPT-DE.md) · Setup guide: [docs/VOICE-SETUP.md](../docs/VOICE-SETUP.md).
 
 Simulated: QR identity verification, the hospital portal, the letter source, and staff
 notification (an in-memory list, cleared on restart or with **Demo zurücksetzen**).

@@ -29,6 +29,10 @@
 | MCP enumeration error | Test direct Fabric as that same user first. Check data access; if direct Fabric works, investigate channel delegated authentication/consent. The generic error alone does not identify a root cause. |
 | Different cohort counts | Compare exact criteria, fixed dates, distinct patients vs. episodes, null semantics and retained conversation context against independent SQL. Do not patch answers with stored numbers. |
 | Agent refuses identifiers | Expected behavior; aggregate alternatives are allowed. This is not evidence of database-level row protection. |
+| Voice: assistant interrupts itself | Use a headset or lower speaker volume; open speakers feed its own voice back into the microphone. |
+| Voice: "Verbindung wird wiederhergestellt …" | The realtime connection dropped; the app reconnects up to three times and passes the recent conversation. Keep talking. If it fails, end and restart the conversation. |
+| Voice: no callback on `/team` | Use a question that requires one (medication change, fever, unanswered question); the page refreshes every 3 seconds. Requests are in memory and cleared on restart. |
+| Voice: microphone blocked on a phone | Browsers need `https://` or `localhost`; use the laptop or an HTTPS tunnel/deployment. |
 
 ## Reset and recovery
 
