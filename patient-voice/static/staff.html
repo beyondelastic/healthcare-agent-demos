@@ -30,7 +30,7 @@
     const LANG = { de: "Deutsch", en: "Englisch", tr: "Türkisch", ar: "Arabisch", uk: "Ukrainisch" };
     const CATEGORY = { medication: "Medikation", appointment: "Termin", symptoms: "Beschwerden", pending_result: "Ausstehender Befund", other: "Sonstiges" };
     const URGENCY = { emergency: "Notfall · 112 empfohlen", urgent: "Dringend", routine: "Routine" };
-    const SECTION = { overview: "Behandlung", medication: "Medikamente", appointments: "Termine", pending_results: "Befunde", daily_life: "Alltag", warning_signs: "Warnzeichen", contacts: "Kontakt" };
+    const SECTION = { diagnoses: "Diagnosen", history: "Anamnese", findings: "Befunde", course: "Verlauf", medication: "Medikation", followup: "Procedere" };
     const time = (ts) => new Date(ts * 1000).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
 

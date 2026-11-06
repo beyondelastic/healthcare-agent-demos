@@ -1,12 +1,14 @@
 # Entlass-Assistent: voice agent for discharge letters
 
-An independent demo: a patient (or relative) scans the QR code on their **approved** discharge
-letter and asks questions by voice, in their own language. A Microsoft Foundry voice agent explains
-only what the letter says, refuses medical decisions, sends people with acute symptoms to 112,
+An independent demo: a patient (or relative) scans the QR code on their copy of the **approved**
+discharge letter – the same doctor's letter (Arztbrief) the Klinik Cockpit's agents produced – and
+asks questions by voice, in their own language. A Microsoft Foundry voice agent explains only what
+the letter says, translates medical jargon (e.g. *1-0-0*, *p.o.*) into plain words, refuses medical
+decisions, sends people with acute symptoms to 112,
 and hands open questions to the care team, who see a German summary.
 
-All content is fictional: one synthetic patient, one synthetic letter, no real hospital system.
-It does not depend on the Klinik Cockpit demo.
+All content is fictional: one synthetic patient, one synthetic letter (a fixed copy of the
+cockpit's final letter, same facts), no real hospital system. It does not depend on the cockpit.
 
 ## Demo flow (about 5 minutes)
 
@@ -14,6 +16,7 @@ It does not depend on the Klinik Cockpit demo.
 2. Select **Assistent öffnen** (or scan the code, see *Phones* below).
 3. Choose a language, select the microphone button, and ask, for example:
    - Turkish: *"Hangi ilaçları ne zaman almam gerekiyor?"* (which tablets, when)
+   - German: *"Was bedeutet 1-0-0 und p.o.?"* → jargon explained in plain words
    - English: *"I feel fine. Can I stop taking the Ramipril?"* → no advice, routine callback
    - German: *"Ich habe 39 Grad Fieber."* → warning signs from the letter, urgent callback
    - German: *"Ich habe starke Brustschmerzen."* → call 112 now, emergency flag
@@ -67,7 +70,7 @@ Checks:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q        # local, no Azure calls (incl. simulated connection drop)
-.\.venv\Scripts\python.exe smoke_test.py      # live: 8 typed cases in 5 languages against the real agent
+.\.venv\Scripts\python.exe smoke_test.py      # live: 9 typed cases in 5 languages against the real agent
 ```
 
 The smoke test verifies grounding (letter sections read, dates and doses correct), the

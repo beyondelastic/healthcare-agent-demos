@@ -13,8 +13,8 @@ def clean():
 
 
 def test_sections_come_only_from_the_approved_letter():
-    result = tools.run_tool("get_discharge_information", {"section_ids": ["medication", "appointments"]})
-    assert result["ok"] and [s["id"] for s in result["sections"]] == ["medication", "appointments"]
+    result = tools.run_tool("get_discharge_information", {"section_ids": ["medication", "followup"]})
+    assert result["ok"] and [s["id"] for s in result["sections"]] == ["medication", "followup"]
     assert "Ibuprofen 400 mg" in result["sections"][0]["text"]
     assert "freigegeben" in result["source"]
 
@@ -43,9 +43,9 @@ def test_callback_is_validated_and_visible_to_staff():
 def test_sources_and_transcript_are_tracked_per_session():
     session = tools.start_session("de")
     tools.log(session, "patient", "Wann ist mein Termin?")
-    tools.run_tool("get_discharge_information", {"section_ids": ["appointments", "appointments"]}, session)
+    tools.run_tool("get_discharge_information", {"section_ids": ["followup", "followup"]}, session)
     view = tools.staff_view()["sessions"][0]
-    assert view["sources"] == ["appointments"] and view["transcript"][0]["text"] == "Wann ist mein Termin?"
+    assert view["sources"] == ["followup"] and view["transcript"][0]["text"] == "Wann ist mein Termin?"
 
 
 def test_pages_letter_qr_and_staff_endpoints():

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Klinik Cockpit · KI-Agenten</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="logo">✚</span>
+      <div><strong>Klinik Cockpit</strong><span>KI-Agenten im Entlassmanagement</span></div>
+    </div>
+    <div class="patient" id="patient"></div>
+    <button class="event-btn" id="release" type="button" title="Simuliert eine Freigabe im Medikationsmodul. Die Agenten reagieren selbstständig.">⚡ Demo-Ereignis: Stationsapotheke gibt Medikationsplan frei</button>
+    <button class="ghost" id="reset" type="button" title="Demo zurücksetzen">↺ Zurücksetzen</button>
+  </header>
+
+  <main class="grid">
+    <!-- Agents and live protocol -->
+    <section class="col agents">
+      <h2>Agenten-Team</h2>
+      <div class="agent-card" id="agent-writer">
+        <div class="avatar writer">✎</div>
+        <div><strong>Dokumentations-Agent</strong><span class="model" id="model-writer"></span></div>
+        <span class="state" id="state-writer">bereit</span>
+      </div>
+      <div class="agent-card" id="agent-reviewer">
+        <div class="avatar reviewer">✓</div>
+        <div><strong>Prüf-Agent</strong><span class="model" id="model-reviewer"></span></div>
+        <span class="state" id="state-reviewer">bereit</span>
+      </div>
+      <div class="stats" id="stats"></div>
+      <h2>Live-Protokoll</h2>
+      <ol class="timeline" id="timeline"><li class="empty">Noch keine Aktivität.</li></ol>
+    </section>
+
+    <!-- Letter -->
+    <section class="col letter-col">
+      <div class="start" id="start">
+        <h1>Entlassung heute – der Brief fehlt noch.</h1>
+        <p>Die Informationen liegen in acht Systemen. Zwei KI-Agenten erstellen und prüfen den Arztbrief – Sie geben ihn am Ende frei.</p>
+        <div class="systems" id="systems"></div>
+        <button class="primary big" id="prepare" type="button">Entlassbrief mit KI-Agenten erstellen</button>
+      </div>
+      <article class="letter" id="letter" hidden>
+        <div class="approved-banner" id="approved" hidden></div>
+        <div class="letter-head">
+          <div><h1>Ärztlicher Entlassbrief</h1><span id="letter-sub"></span></div>
+          <span class="version" id="version"></span>
+        </div>
+        <div id="sections"></div>
+      </article>
+    </section>
+
+    <!-- Open points, review, event, approval -->
+    <section class="col side">
+      <div class="panel approve">
+        <h2 id="approve-title">Ärztliche Freigabe</h2>
+        <p class="muted" id="approve-hint">Einzige menschliche Entscheidung im Ablauf.</p>
+        <button class="primary" id="approve" type="button" disabled>Brief prüfen und freigeben</button>
+        <div class="dispatch" id="dispatch" hidden>
+          <button type="button" data-channel="kim"><span class="ico">✉</span><span><b>Per KIM an Hausarztpraxis</b><small>eArztbrief über die Telematikinfrastruktur</small></span><span class="done-at"></span></button>
+          <button type="button" data-channel="epa"><span class="ico">⇪</span><span><b>In ePA einstellen</b><small>elektronische Patientenakte</small></span><span class="done-at"></span></button>
+          <button type="button" data-channel="print"><span class="ico">⎙</span><span><b>Patientenexemplar drucken</b><small>mit QR-Code zum Entlass-Assistenten</small></span><span class="done-at"></span></button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Offene Punkte</h2>
+        <div id="open-points"><p class="muted">Erscheinen, sobald der Entwurf vorliegt.</p></div>
+      </div>
+      <div class="panel">
+        <h2>Prüfbericht</h2>
+        <div id="review"><p class="muted">Der Prüf-Agent prüft jeden Entwurf.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="source-dialog">
+    <div class="dialog-head"><div><span class="sys" id="source-system"></span><strong id="source-title"></strong></div><button type="button" class="close" data-close>×</button></div>
+    <div class="dialog-body"><div class="muted" id="source-meta"></div><p id="source-text"></p></div>
+  </dialog>
+
+  <dialog id="approve-dialog">
+    <form method="dialog" id="approve-form">
+      <div class="dialog-head"><strong>Entlassbrief freigeben</strong><button type="button" class="close" data-close>×</button></div>
+      <div class="dialog-body">
+        <div id="approve-summary"></div>
+        <label>Freigebende Ärztin / freigebender Arzt<input id="physician" value="Dr. med. Demo Ärztin (fiktiv)" required minlength="2"></label>
+        <label class="check"><input type="checkbox" id="confirm"> Ich habe den Entwurf und die offenen Punkte geprüft und übernehme die ärztliche Verantwortung.</label>
+        <div class="error" id="approve-error"></div>
+      </div>
+      <div class="dialog-foot"><button type="button" class="ghost" data-close>Abbrechen</button><button type="submit" class="primary" id="approve-submit" disabled>Freigeben</button></div>
+    </form>
+  </dialog>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

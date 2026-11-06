@@ -108,9 +108,12 @@ TOOL_SCHEMAS = [
     {
         "name": "get_discharge_information",
         "description": (
-            "Returns sections of the patient's physician-approved discharge letter (German source text). "
-            "Call this before answering ANY question about diagnosis, treatment, medication, appointments, "
-            "pending results, daily life, warning signs or contacts."
+            "Returns sections of the patient's physician-approved discharge letter (German medical source text, "
+            "written for the GP). Sections: diagnoses, history (reason for admission), findings (ultrasound, lab, "
+            "pending histology), course (operation and hospital stay), medication (discharge medication), followup "
+            "(appointments, daily-life rules, warning signs incl. 112, contacts). Call this before answering ANY "
+            "question about the stay, diagnosis, treatment, medication, appointments, pending results, daily life, "
+            "warning signs, contacts, or what a term or abbreviation in the letter means."
         ),
         "parameters": {
             "type": "object",

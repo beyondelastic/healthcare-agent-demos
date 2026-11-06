@@ -1,8 +1,13 @@
 {
-  "_hinweis": "Vollstaendig fiktiver Demo-Entlassbrief. Keine reale Person, keine reale Behandlung, keine medizinische Empfehlung.",
+  "_hinweis": "Vollstaendig fiktiver Demo-Entlassbrief (Patientenexemplar des aerztlichen Entlassbriefs). Keine reale Person, keine reale Behandlung, keine medizinische Empfehlung. Inhalt entspricht dem im Klinik Cockpit erzeugten und freigegebenen Brief.",
   "letter_id": "DEMO-EB-2026-1106",
   "hospital": "Universitätsklinikum Musterstadt (fiktiv)",
   "department": "Klinik für Allgemein- und Viszeralchirurgie",
+  "director": "Direktor: Prof. Dr. med. Max Beispiel (fiktiv)",
+  "address": "Musterstraße 1 · 00000 Musterstadt",
+  "phone": "Chirurgische Ambulanz: 0000 000000-100 (Demo-Nummer)",
+  "recipient": ["Hausarztpraxis Dr. med. Anna Hausarzt (fiktiv)", "Beispielweg 5", "00000 Musterstadt"],
+  "letter_date": "06.11.2026",
   "patient": {
     "name": "Elena Novak",
     "date_of_birth": "14.03.1959",
@@ -11,45 +16,41 @@
   "admission_date": "03.11.2026",
   "discharge_date": "06.11.2026",
   "approval": {
-    "approved_by": "Dr. med. Demo Ärztin (fiktiv), Oberärztin",
-    "approved_at": "06.11.2026, 09:40 Uhr",
+    "approved_by": "Dr. med. Demo Ärztin (fiktiv)",
+    "role": "Oberärztin, Klinik für Allgemein- und Viszeralchirurgie",
+    "approved_at": "06.11.2026, 10:30 Uhr",
     "status": "ärztlich freigegeben"
   },
   "sections": [
     {
-      "id": "overview",
-      "title": "Grund des Aufenthalts und Behandlung",
-      "text": "Sie wurden am 03.11.2026 wegen Gallensteinen mit wiederkehrenden Oberbauchschmerzen aufgenommen (Diagnose: symptomatische Cholezystolithiasis). Am 04.11.2026 wurde Ihre Gallenblase in einer Schlüsselloch-Operation entfernt (laparoskopische Cholezystektomie). Die Operation und der Verlauf waren ohne Komplikationen. Sie werden am 06.11.2026 nach Hause entlassen."
+      "id": "diagnoses",
+      "title": "Diagnosen",
+      "text": "Symptomatische Cholezystolithiasis. Arterielle Hypertonie."
+    },
+    {
+      "id": "history",
+      "title": "Anamnese und Aufnahmegrund",
+      "text": "Elektive Aufnahme am 03.11.2026 zur Cholezystektomie bei seit 3 Monaten rezidivierenden, postprandialen rechtsseitigen Oberbauchschmerzen. Kein Fieber, kein Ikterus. Vorerkrankung: arterielle Hypertonie. Allergien: keine bekannt."
+    },
+    {
+      "id": "findings",
+      "title": "Befunde",
+      "text": "Sonographie Abdomen (03.11.2026): mehrere Gallenblasenkonkremente bis 12 mm, Wand nicht verdickt, keine Pericholezystitis, DHC 5 mm, keine intrahepatische Cholestase. Labor: 03.11. Leukozyten 8,9 /nl, CRP 12 mg/l, Bilirubin gesamt 0,8 mg/dl, GOT/GPT und Lipase im Normbereich; 05.11. Leukozyten 9,2 /nl, CRP 18 mg/l (Referenz < 5 mg/l). Histologie der Gallenblase ausstehend."
+    },
+    {
+      "id": "course",
+      "title": "Therapie und Verlauf",
+      "text": "Laparoskopische Cholezystektomie am 04.11.2026, komplikationslos. Gallenblase zur histologischen Untersuchung eingesandt, Hautverschluss mit resorbierbarem Nahtmaterial, kein Fadenzug erforderlich. Postoperativ komplikationsloser Verlauf, problemloser Kostaufbau, schmerzarm unter Ibuprofen bei Bedarf, Wunden reizlos, afebril. Entlassung am 06.11.2026 in die Häuslichkeit."
     },
     {
       "id": "medication",
-      "title": "Medikamente nach der Entlassung",
-      "text": "1. Ibuprofen 400 mg: nur bei Schmerzen, bis zu 3-mal täglich 1 Tablette zu einer Mahlzeit, höchstens 5 Tage lang. 2. Pantoprazol 20 mg (Magenschutz): 1 Tablette morgens vor dem Frühstück, solange Sie Ibuprofen einnehmen. 3. Ramipril 5 mg (Ihr Blutdruckmedikament von zu Hause): unverändert weiter 1 Tablette morgens. Neue Medikamente oder Änderungen bitte nur nach Rücksprache mit Ihrer Hausarztpraxis oder der Klinik."
+      "title": "Entlassmedikation",
+      "text": "Gemäß ärztlich und durch die Stationsapotheke freigegebenem Entlassmedikationsplan (06.11.2026): Ibuprofen 400 mg p.o. bei Bedarf bei Schmerzen, max. 3 x täglich zu den Mahlzeiten, höchstens 5 Tage. Pantoprazol 20 mg p.o. 1-0-0 vor dem Frühstück, solange Ibuprofen eingenommen wird. Ramipril 5 mg p.o. 1-0-0, Hausmedikation unverändert fortführen. Keine Antibiotikatherapie. Keine bekannten Arzneimittelallergien."
     },
     {
-      "id": "appointments",
-      "title": "Termine und Nachsorge",
-      "text": "Wundkontrolle in Ihrer Hausarztpraxis in 3 bis 4 Tagen, also am Montag, 09.11.2026, oder Dienstag, 10.11.2026. Bitte vereinbaren Sie diesen Termin selbst. Nachsorgetermin in der Chirurgischen Ambulanz am Dienstag, 24.11.2026, um 10:30 Uhr, Gebäude A, Ebene 2. Die Hautfäden sind selbstauflösend und müssen nicht gezogen werden."
-    },
-    {
-      "id": "pending_results",
-      "title": "Ausstehende Befunde",
-      "text": "Die feingewebliche Untersuchung der entfernten Gallenblase (Histologie) ist noch nicht abgeschlossen. Das Ergebnis wird Ihrer Hausarztpraxis zugeschickt und beim Nachsorgetermin am 24.11.2026 mit Ihnen besprochen."
-    },
-    {
-      "id": "daily_life",
-      "title": "Verhalten im Alltag",
-      "text": "Duschen ist erlaubt; tupfen Sie die Wunden danach trocken. Bitte 2 Wochen nicht baden, nicht schwimmen und nicht in die Sauna gehen. Heben Sie 2 Wochen lang nichts, was schwerer als 5 kg ist. Autofahren erst, wenn Sie schmerzfrei sind und sich sicher fühlen. Sie können normal essen; sehr fettreiche Speisen in den ersten Tagen eher meiden."
-    },
-    {
-      "id": "warning_signs",
-      "title": "Warnzeichen",
-      "text": "Melden Sie sich umgehend bei Ihrer Hausarztpraxis oder der Chirurgischen Ambulanz bei: Fieber über 38,5 Grad, zunehmenden Bauchschmerzen, Gelbfärbung von Haut oder Augen, Rötung, Schwellung oder Flüssigkeit an den Wunden, anhaltendem Erbrechen. Bei plötzlichen starken Beschwerden wie Atemnot, Brustschmerzen, sehr starken Bauchschmerzen oder Bewusstseinsstörungen rufen Sie sofort den Notruf 112."
-    },
-    {
-      "id": "contacts",
-      "title": "Kontakt",
-      "text": "Chirurgische Ambulanz: Montag bis Freitag, 8 bis 16 Uhr, Telefon 0000 000000-100 (Demo-Nummer). Außerhalb dieser Zeiten: ärztlicher Bereitschaftsdienst 116 117. Im Notfall: 112."
+      "id": "followup",
+      "title": "Procedere und Weiterbehandlung",
+      "text": "Wundkontrolle in der Hausarztpraxis am 09.11.2026 oder 10.11.2026, Termin vereinbart die Patientin selbst. Nachsorgetermin Chirurgische Ambulanz: Dienstag, 24.11.2026, 10:30 Uhr, Gebäude A, Ebene 2, zur Besprechung der Histologie und Verlaufskontrolle; das histologische Ergebnis wird zudem an die Hausarztpraxis übermittelt. Duschen erlaubt, Wunden trocken tupfen; Baden, Schwimmen und Sauna für 2 Wochen meiden. Körperliche Schonung, kein Heben über 5 kg für 2 Wochen. Autofahren erst bei Schmerzfreiheit. Normale Kost, sehr fettreiche Speisen in den ersten Tagen meiden. Wiedervorstellung bei Fieber über 38,5 °C, zunehmenden Bauchschmerzen, Gelbfärbung von Haut oder Augen, Rötung, Schwellung oder Sekretion der Wunden sowie anhaltendem Erbrechen. Bei Atemnot, Brustschmerzen, sehr starken Bauchschmerzen oder Bewusstseinsstörung sofort Notruf 112. Kontakt Chirurgische Ambulanz: Montag bis Freitag 8 bis 16 Uhr, Telefon 0000 000000-100 (Demo-Nummer); außerhalb dieser Zeiten ärztlicher Bereitschaftsdienst 116 117."
     }
   ]
 }

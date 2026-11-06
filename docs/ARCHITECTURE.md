@@ -1,36 +1,40 @@
 # Architecture, access, and demo boundaries
 
-## Clinical documentation
+## Clinical documentation (Klinik Cockpit · KI-Agenten)
 
 ```mermaid
 flowchart LR
-    U[German local cockpit / simulated KIS] --> A[FastAPI on loopback]
-    A --> S[(Local SQLite: synthetic cases and workflow)]
-    A <--> F[Foundry prompt agent]
-    A --> C[Azure Content Understanding: optional scan]
-    F -. requests read-only tools .-> A
+    U[Cockpit UI] --> A[FastAPI workflow on loopback]
+    A <-->|Responses API, Entra ID| W[Foundry writer agent: gpt-4.1]
+    A <-->|Responses API, Entra ID| R[Foundry reviewer agent: gpt-5.5]
+    W -. list_patient_sources / read_source .-> A
+    R -. list_patient_sources / read_source .-> A
+    A --> S[(Simulated systems: KIS, RIS, LIS, OP, nursing, pathology, medication, appointments)]
+    A --> O[Final letter: KIM / ePA / print, simulated]
 ```
 
-The agent requests document inventory, workflow state, individual originals,
-laboratory status, and follow-up context. The local backend executes read-only
-functions and returns case-scoped results. It validates source references and
-proposal shape, not medical correctness.
+Two prompt agents with strict JSON output schemas run in sequence. The writer
+lists and reads the sources through client-executed function tools and drafts six
+letter sections with source citations and open points. The reviewer, a different
+and stronger model, reads the sources itself and checks every statement; its
+errors go back to the writer (at most two correction rounds).
 
-Human actions release a simulated medication plan, accept text, assess
-findings, assign a demo role, complete a task, approve a draft, and copy it into
-the simulated KIS. Approval is not a medical signature. Existing copied
-versions remain immutable. A source change invalidates applicability of
-older proposals. Revision checks guard concurrent local edits.
+The server, not the model, enforces the boundaries: unreleased or pending source
+content is never returned to the agents, and each draft is validated (six
+sections, all required sources read, citations only to read and released sources,
+an open point for every pending or unreleased source, no stale open points).
+Failed checks go back to the agent visibly in the log; nothing is silently fixed.
+It validates structure and sourcing, not medical correctness.
 
-The optional scan chapter uses real extraction on a generated fictional
-external consultation report. Source acceptance checks case association and
-requires explicit human confirmation. The later laboratory result comes from
-the simulated LIS. Automatic new-source processing is local application
-orchestration, not a Foundry routine or autonomous hospital operation.
+A simulated event (the ward pharmacy releases the medication plan) makes the
+writer re-read only that source and update only the affected section, followed by
+another review. One human approval turns the draft into the final doctor's letter
+with a QR code for the patient. Sending via KIM, ePA upload and storage are
+simulated; approval is a demo state, not a qualified electronic signature.
 
-The local server has no end-user authentication, trusted reviewer identity,
-or per-user authorization. Reviewer labels and audit records are demo state,
-not a protected clinical audit trail. **Do not expose it to a network.**
+State lives in memory. The local server has no end-user authentication or
+per-user authorization. **Do not expose it to a network.** The earlier
+approval-heavy cockpit is archived in `archive/klinik-cockpit-v1/`.
 
 ## Research feasibility
 
@@ -76,10 +80,11 @@ flowchart LR
     T --> S[Care-team view]
 ```
 
-The patient opens the page from a QR code on the approved discharge letter
-(identity check simulated). The voice agent has no letter content in its
+The patient opens the page from a QR code on their copy of the approved
+doctor's letter (the same letter the cockpit agents produce; identity check
+simulated). The voice agent has no letter content in its
 instructions: it must call `get_discharge_information` for approved sections
-and may only rephrase or translate them. Medication changes, questions the
+and may only rephrase, explain medical jargon in plain words, or translate them. Medication changes, questions the
 letter doesn't answer, and warning signs create callback requests with a German
 summary; acute danger signs trigger an immediate 112 instruction. The browser
 never receives a token; the relay holds the credential, executes the tools, and

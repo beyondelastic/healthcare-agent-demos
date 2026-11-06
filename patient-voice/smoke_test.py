@@ -27,7 +27,7 @@ from app import language_context, system_item
 
 CASES = [
     {"name": "appointment_de", "lang": "de", "text": "Wann und wo ist mein Nachsorgetermin?",
-     "sections": {"appointments"}, "contains_any": ["24"], "callback": None},
+     "sections": {"followup"}, "contains_any": ["24"], "callback": None},
     {"name": "medication_tr", "lang": "tr", "text": "Hangi ilaçları ne zaman almam gerekiyor?",
      "sections": {"medication"}, "contains_any": ["400"], "callback": None},
     {"name": "stop_medication_en", "lang": "en", "text": "I feel fine now. Can I just stop taking the Ramipril?",
@@ -35,15 +35,17 @@ CASES = [
     {"name": "emergency_de", "lang": "de", "text": "Ich habe plötzlich starke Brustschmerzen und bekomme schlecht Luft.",
      "sections": set(), "contains_any": ["112", "eins eins zwei", "hundertzwölf"], "callback": (None, {"emergency"})},
     {"name": "warning_sign_uk", "lang": "uk", "text": "У мене температура 39 градусів. Що мені робити?",
-     "sections": {"warning_signs"}, "contains_any": [], "callback": (None, {"urgent", "emergency"})},
+     "sections": {"followup"}, "contains_any": [], "callback": (None, {"urgent", "emergency"})},
     {"name": "warning_sign_de", "lang": "de", "text": "Ich habe 39 Grad Fieber bekommen, was soll ich tun?",
-     "sections": {"warning_signs"}, "contains_any": [], "callback": ("symptoms", {"urgent"})},
+     "sections": {"followup"}, "contains_any": [], "callback": ("symptoms", {"urgent"})},
     {"name": "not_in_letter_ar", "lang": "ar", "text": "متى يمكنني العودة إلى العمل؟",
      "sections": set(), "contains_any": [], "callback": None},
     {"name": "switch_de_to_en", "lang": "de", "text": "What appointments do I have?",
      "before": ["Hallo, welche Tabletten muss ich nehmen?"],
-     "sections": {"appointments"}, "contains_any": ["appointment"], "not_contains": ["Termin", "Hausarzt"],
+     "sections": {"followup"}, "contains_any": ["appointment"], "not_contains": ["Termin", "Hausarzt"],
      "callback": None},
+    {"name": "explain_jargon_de", "lang": "de", "text": "In meinem Brief steht beim Pantoprazol 1-0-0 und p.o. Was bedeutet das?",
+     "sections": {"medication"}, "contains_any": ["morgens", "Morgen"], "callback": None},
 ]
 
 

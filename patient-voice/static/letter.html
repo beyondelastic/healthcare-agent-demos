@@ -8,43 +8,44 @@
 </head>
 <body>
   <article class="sheet">
-    <div class="letterhead">
-      <div><h1 id="hospital"></h1><div class="dept" id="department"></div></div>
-      <div class="letter-meta" id="meta"></div>
+    <div class="lh">
+      <div class="lh-mark">✚</div>
+      <div class="lh-org" id="org"></div>
     </div>
-    <h2>Entlassbrief für Patientinnen und Patienten</h2>
-    <div class="patient-line" id="patient-line"></div>
+    <div class="lh-row">
+      <div id="recipient"></div>
+      <div class="lh-meta" id="meta"></div>
+    </div>
+    <p class="subject" id="subject"></p>
+    <p id="intro"></p>
     <div id="sections"></div>
-    <div class="signature" id="signature"></div>
+    <div class="sign" id="signature"></div>
 
     <div class="qr-box">
       <img id="qr" src="/api/qr.svg" alt="QR-Code zum Sprachassistenten">
       <div>
-        <h4>Fragen zu diesem Brief? Fragen Sie in Ihrer Sprache.</h4>
-        <p>Scannen Sie den Code mit Ihrem Smartphone. Der Sprachassistent erklärt Ihnen diesen ärztlich freigegebenen Brief und leitet Fragen an Ihr Behandlungsteam weiter.</p>
+        <h4>Für Sie als Patientin: Fragen zu diesem Brief?</h4>
+        <p>Scannen Sie den Code. Der Entlass-Assistent erklärt Ihnen diesen ärztlich freigegebenen Brief in Ihrer Sprache und leitet Fragen an Ihr Behandlungsteam weiter.</p>
         <div class="qr-langs">Deutsch · English · Türkçe · العربية · Українська</div>
         <a class="open-link" id="open" href="/patient">Assistent öffnen</a>
       </div>
     </div>
-    <div class="fiction">Fiktiver Demo-Brief. Keine reale Person, keine reale Behandlung.</div>
+    <div class="fiction">Patientenexemplar · Fiktiver Demo-Brief. Keine reale Person, keine reale Behandlung.</div>
   </article>
   <script>
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
     fetch("/api/letter").then((r) => r.json()).then((l) => {
-      const set = (id, text) => (document.getElementById(id).textContent = text);
-      set("hospital", l.hospital);
-      set("department", l.department);
-      document.getElementById("meta").innerHTML = "";
-      for (const line of [`Fall-Nr. ${l.patient.case_id}`, `Aufnahme ${l.admission_date}`, `Entlassung ${l.discharge_date}`]) {
-        const div = document.createElement("div"); div.textContent = line; document.getElementById("meta").appendChild(div);
-      }
-      set("patient-line", `${l.patient.name}, geb. ${l.patient.date_of_birth}`);
-      for (const s of l.sections) {
-        const h = document.createElement("h3"); h.textContent = s.title;
-        const p = document.createElement("p"); p.textContent = s.text;
-        document.getElementById("sections").append(h, p);
-      }
-      set("signature", `${l.approval.status}: ${l.approval.approved_by}, ${l.approval.approved_at}`);
-      document.getElementById("open").href = `/patient?brief=${encodeURIComponent(l.letter_id)}`;
+      const $ = (id) => document.getElementById(id);
+      $("org").append(el("strong", "", l.hospital), el("span", "", l.department), el("span", "", l.director), el("span", "", l.address));
+      l.recipient.forEach((line) => $("recipient").appendChild(el("div", "", line)));
+      $("meta").append(el("div", "", `Musterstadt, ${l.letter_date}`), el("div", "", `Unser Zeichen: ${l.patient.case_id}`), el("div", "", l.phone));
+      const p = l.patient;
+      $("subject").textContent = `Entlassbrief – ${p.name}, geb. ${p.date_of_birth} – stationärer Aufenthalt vom ${l.admission_date} bis ${l.discharge_date}`;
+      $("intro").textContent = `Sehr geehrte Frau Kollegin, sehr geehrter Herr Kollege, wir berichten über Ihre Patientin Frau ${p.name}, geb. ${p.date_of_birth}, die sich vom ${l.admission_date} bis ${l.discharge_date} in unserer stationären Behandlung befand.`;
+      for (const s of l.sections) $("sections").append(el("h3", "", s.title), el("p", "", s.text));
+      $("signature").append(el("p", "", "Mit freundlichen kollegialen Grüßen"), el("strong", "", l.approval.approved_by),
+        el("span", "", l.approval.role), el("span", "esign", `✓ elektronisch freigegeben am ${l.approval.approved_at}`));
+      $("open").href = `/patient?brief=${encodeURIComponent(l.letter_id)}`;
     });
   </script>
 </body>

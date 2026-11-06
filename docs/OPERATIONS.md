@@ -16,11 +16,10 @@
 
 | Symptom | Check / action |
 |---|---|
-| Clinical page shows an old letter | Local SQLite persists across restarts. Use explicit reset only when intended, or continue from the stored state. |
-| Agent unavailable or unauthorized | Check the configured tenant, project, deployment, agent version, and signed-in identity. Restart after `.env` changes. |
-| Clinical stale-source/conflict warning | Secure unsaved edits, load current state, and explicitly run/review again. Do not bypass revision checks. |
-| Scan action unavailable | Content Understanding endpoint/analyzer and permissions are required; skip the optional chapter if not configured. |
-| Scan case association fails | Inspect original and extracted fields. Do not force a mismatched report into the case. |
+| Cockpit: agents take longer than usual | Typical: first draft 30–45 s, update 15–30 s, plus up to two correction rounds. The live log shows progress; keep explaining. |
+| Cockpit: "Server-Prüfung: Korrektur angefordert" in the log | Expected behaviour: server checks send faulty drafts back to the agent. Only an aborted run ("Validierung fehlgeschlagen") needs **↺ Zurücksetzen** and a new start. |
+| Cockpit: reviewer finds no error this time | Real, not staged; the verdict varies between runs. Explain the check instead of promising a finding. |
+| Agent unavailable or unauthorized | Check the configured tenant, project, deployment, agent version (`create_agents.py` / `create_agent.py`), and signed-in identity. Restart after `.env` changes. |
 | Fabric SQL verification fails | Inspect table-load and endpoint readiness, SQL access, capacity, and the actual reported error. Counts must match before agent setup. |
 | Missing cloud configuration | Complete the root `.env`; no sample tenant IDs are supplied. Process environment overrides `.env`. |
 | Teams request submitted to admin | Complete custom-app approval and user availability in the correct Microsoft 365 tenant. |
@@ -36,15 +35,10 @@
 
 ## Reset and recovery
 
-The clinical full-demo reset affects all three local cases, their current
-drafts/reviews/tasks and agent histories. The application stores a snapshot
-inside the same database, not an independent recovery backup, and has no restore
-UI. Raw upload blobs may remain in retained backups. Do not use reset as a
-privacy-deletion mechanism.
-
-Server restarts visibly fail interrupted jobs rather than silently replaying
-paid inference. A failed operation requires explicit review/retry; no failed
-cloud call is converted automatically to a rehearsal result.
+The cockpit and voice demo keep their state in memory only; **↺ Zurücksetzen**
+or a restart returns them to the starting point. A run interrupted by a restart
+is not replayed. No failed cloud call is converted automatically to a prepared
+result.
 
 Research scripts record resource IDs and hashes in ignored
 `.local\research-deployment.json`. Keep it privately with the matching
@@ -54,14 +48,14 @@ an endpoint that routes to latest.
 
 ## Costs and cleanup
 
-Clinical inference and scan extraction incur usage. Research consumes Fabric
+Clinical and voice inference incur usage. Research consumes Fabric
 capacity, storage/query resources, and inference. Teams publishing can create
 additional Azure resources; inspect the actual resource inventory and billing.
 
 These scripts do not automatically suspend a capacity, unregister providers,
 remove role assignments, delete bots, or delete agents. After the event:
 
-1. Stop the local clinical server with Ctrl+C.
+1. Stop the local cockpit and voice servers with Ctrl+C.
 2. Remove test-user access and app distribution when no longer needed.
 3. Suspend only an explicitly identified demo capacity after checking other
    workloads; suspension affects the whole capacity.

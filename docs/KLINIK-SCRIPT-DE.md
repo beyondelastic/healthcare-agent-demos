@@ -1,77 +1,53 @@
-# Klinik Cockpit: einfaches Vorfuehrskript
+# Klinik Cockpit · KI-Agenten: Vorführskript
 
-**Dauer:** Kapitel A ca. 15-20 Minuten; Kapitel B optional weitere 10-15 Minuten.
-**Vorbereitung:** [technisches Setup](KLINIK-SETUP.md).
-**Ausgangslage:** Nora Testfall (DEMO-031), keine bisherigen Briefe,
-Medikationsplan noch nicht freigegeben, Mikrobiologie noch ausstehend.
-Bei abweichendem Zustand vor der Sitzung bewusst zuruecksetzen; niemals
-ungefragt vorhandene Ergebnisse loeschen.
+**Dauer:** ca. 6–8 Minuten · **Botschaft:** *KI-Agenten erledigen die Fleißarbeit über viele
+Systeme, prüfen sich gegenseitig und reagieren auf neue Information – die Ärztin entscheidet
+einmal, am Ende.*
+**Vorbereitung:** [technisches Setup](KLINIK-SETUP.md) · Code: [agent-cockpit/](../agent-cockpit/README.md)
 
-## Kapitel A: Vom Quellenproblem zum geprueften Brief
+## Vorbereitung
 
-| Schritt | Aktion | Zeigen / sagen |
-|---|---|---|
-| 1 | Cockpit oeffnen, **Praesentation**, Nora waehlen. | "Informationen liegen verteilt vor. Der freigegebene Medikationsplan fehlt." |
-| 2 | **Quellen mit Agent pruefen** auswaehlen. | "Der Agent fragt Werkzeuge ab; er bekommt nicht einfach einen fertigen Brief." |
-| 3 | Quellenkarten und **Agentenarbeit** beobachten. Bei Bedarf **Technische Details · Originalprotokoll** oeffnen. | Tatsaechliche Modell-/Werkzeugaufrufe und gelesene Originale zeigen, keine simulierte Gedankenkette. |
-| 4 | Bei **Quellenpruefung abgeschlossen** die Luecke zeigen; **Medikationsplan pruefen**, dann **Medikationsmodul oeffnen**. | "Fehlende Medikation wird nicht erfunden." Den unvollstaendigen Vorschlag nicht uebernehmen. |
-| 5 | Im blauen Demo-KIS den vorbereiteten Plan ansehen; **Medikationsplan freigeben** mit Bestaetigung. | "Das ist eine menschliche Aktion in einem simulierten System." Den Abschlussbefund noch nicht bereitstellen. |
-| 6 | **Zurueck zum Cockpit**; **Neue Quelle mit Agent pruefen**. | "Die Quellen haben sich geaendert. Der alte Vorschlag ist nicht mehr aktuell." |
-| 7 | **Briefvorschlag oeffnen**; insbesondere **Entlassmedikation** und Quellenlinks ansehen. | Nachvollziehbarkeit bis zum Originalabsatz zeigen. Quellenbezug beweist keine medizinische Richtigkeit. |
-| 8 | **Entwurf pruefen & uebernehmen**, Ersetzung bewusst bestaetigen. | "Jetzt entsteht ein editierbarer Entwurf, noch keine Freigabe." Alle sechs Abschnitte werden uebernommen. |
-| 9 | Brief und offene Pruefpunkte ansehen; erforderliche Bewertungen mit Demo-Name und Begruendung erfassen. | Ausstehende Befunde nicht faelschlich als erledigt markieren. Pruefliste ist eine enge deterministische Demo-Regel, kein KI-Fehlerdetektor. |
-| 10 | **Demo-Entwurf freigeben**; anschliessend separat **Geprueften Entwurf ins Demo-KIS** bestaetigen. | "Pruefung, Freigabe und Uebergabe sind getrennte menschliche Schritte." |
-| 11 | **Erste Briefkopie im Demo-KIS ansehen**. | Die gespeicherte Kopie zeigen. Keine reale Signatur oder Uebertragung in ein Krankenhaus. |
+1. `.\Start-AgentCockpit.ps1` im Ordner `agent-cockpit` starten, <http://127.0.0.1:8020/> im
+   Vollbild (F11) öffnen.
+2. **↺ Zurücksetzen** klicken. Startbildschirm zeigt die acht angebundenen Systeme.
+3. Einmal vorab durchspielen (Azure-Anmeldung, Laufzeit).
 
-**Kernaussage:** Der Agent reduziert Quellenarbeit und macht Vorschlaege.
-Menschen klaeren Luecken, bewerten Inhalte und entscheiden ueber Freigabe.
+## Ablauf
 
-## Kapitel B: Ein Scan trifft nach der Uebergabe ein
+| # | Aktion | Was passiert | Was Sie sagen |
+|---|---|---|---|
+| 1 | Startbildschirm zeigen | Acht Systeme: KIS, Radiologie, Labor, OP, Pflege, Pathologie, Medikation, Termine | „Entlassung heute. Die Informationen liegen in acht Systemen – heute sucht eine Ärztin sie zusammen.“ |
+| 2 | **Entlassbrief mit KI-Agenten erstellen** | Live-Protokoll: der Dokumentations-Agent findet 9 Quellen und liest sie parallel | „Der Agent arbeitet wie ein Mensch – nur parallel: Er fragt die Systeme selbst ab. Jede Zeile ist ein echter Werkzeugaufruf.“ |
+| 3 | Auf **nicht freigegeben** / **ausstehend** zeigen | Medikationsplan in Prüfung der Stationsapotheke, Histologie ausstehend | „Was nicht freigegeben ist, bekommt der Agent nicht – und er rät nicht. Er markiert es als offenen Punkt.“ |
+| 4 | Prüf-Agent beobachten | Zweiter Agent (anderes, stärkeres Modell) liest die Quellen selbst und prüft jede Aussage | „Vier-Augen-Prinzip, aber mit Agenten: Einer schreibt, einer prüft – unabhängig.“ |
+| 5 | Falls Prüfbefund: violette Abschnitte zeigen | „x Fehler gefunden → korrigiert“, z.B. fehlende Uhrzeit des Nachsorgetermins | „Der Prüf-Agent hat eine Lücke gefunden, der Schreib-Agent hat sie selbst korrigiert. Kein Mensch musste eingreifen.“ |
+| 6 | Quellen-Chip anklicken | Originaltext der Quelle | „Jede Aussage ist bis zur Quelle nachvollziehbar.“ |
+| 7 | **⚡ Demo-Ereignis: Stationsapotheke gibt Medikationsplan frei** | Agent liest nur den neuen Plan, aktualisiert nur „Entlassmedikation“ (gelb), Prüf-Agent prüft erneut | „Neue Information – die Agenten reagieren selbst. Nur der betroffene Abschnitt ändert sich, alles andere bleibt wortgleich.“ |
+| 8 | **Brief prüfen und freigeben** → bestätigen | Der Entwurf wird zum fertigen Arztbrief: Briefkopf, Empfänger (Hausarztpraxis), Anrede, Unterschrift „elektronisch freigegeben“, QR-Code für die Patientin | „Eine einzige menschliche Entscheidung – und der Brief ist fertig.“ |
+| 9 | Rechts **Versand**: **Per KIM an Hausarztpraxis**, **In ePA einstellen** | Bestätigung mit Uhrzeit, Eintrag im Protokoll (Simulation) | „Die Hausarztpraxis hat den Brief sofort – über KIM in der Telematikinfrastruktur, und er liegt in der ePA der Patientin.“ |
+| 10 | Optional: **Patientenexemplar drucken** | Druckdialog mit dem fertigen Brief und QR-Code | „Und die Patientin bekommt ihr Exemplar – mit QR-Code.“ |
 
-Nur vorfuehren, wenn Content Understanding eingerichtet und vorab getestet ist.
-Der Scan ist ein erfundener externer Konsilbericht; der spaetere Laborbefund
-kommt aus dem simulierten LIS, nicht aus OCR.
+**Übergang zur Sprach-Demo:** Auf den QR-Code zeigen: „Elena Novak hat jetzt ihren Brief. Und wenn
+sie zu Hause Fragen hat – vielleicht auf Türkisch?“ → Entlass-Assistent. Die Inhalte (Medikation,
+Termine, Warnzeichen, Kontakte) stimmen in beiden Demos überein.
 
-1. **Dokumenteingang oeffnen** und **Demo-Scan auswaehlen**. Synthetische Daten
-   und Azure-Verarbeitung bestaetigen; **Scan mit Azure analysieren**.
-2. Original, erkannte Fallzuordnung und Fundstellen zeigen. Extraktionskonfidenz
-   ist keine medizinische Sicherheit. Bei falscher Zuordnung nicht uebernehmen.
-3. **Geprueften Scan als Quelle uebernehmen**. Fuer den Ereignisablauf
-   **Neue Quellen automatisch mit Agent pruefen** ausdruecklich aktivieren,
-   Demo-Pruefername angeben und bestaetigen.
-4. Agentenarbeit zeigen: Originale, Laborstatus und Aufgabenstatus werden mit
-   echten Werkzeugaufrufen gelesen; die Zielsysteme bleiben simuliert.
-5. **Vorgeschlagene Nachverfolgung bestaetigen**, angebotene Demo-Rolle waehlen
-   und bestaetigen. Keine echte Person wird benachrichtigt.
-6. Den neuen, verantwortungsbezogenen Briefvorschlag pruefen und uebernehmen.
-   Pruefpunkte bearbeiten, freigeben und eine weitere KIS-Kopie uebergeben.
-7. Erst jetzt im blauen Demo-KIS **Abschlussbefund bereitstellen**. Der reale
-   Agent startet durch lokale Ereignisverarbeitung erneut, wenn diese aktiviert ist.
-8. Die Aktualisierung pruefen und uebernehmen. Aufgabe mit
-   **Befund geprueft · Aufgabe abschliessen** bewusst abschliessen.
-9. Brief erneut pruefen, freigeben und separat uebergeben. Aeltere Briefkopien
-   bleiben unveraendert.
+## Wissen für Rückfragen
 
-**Kernaussage:** Neue Information macht einen alten Entwurf nicht automatisch
-richtig. Verantwortung und Abschluss bleiben nachvollziehbar und menschlich.
+- **Echt:** zwei Foundry-Agenten (Schreiben: gpt-4.1, Prüfen: gpt-5.5), echte Werkzeugaufrufe,
+  serverseitige Prüfung jeder Quellenangabe, Korrekturschleife zwischen den Agenten.
+- **Simuliert:** die Klinik-Systeme und ihre Daten, die Freigabe durch die Apotheke, der Versand
+  per KIM und in die ePA, die Ablage im KIS. Alle Daten fiktiv.
+- In Deutschland ist der Entlassbrief ein Arztbrief an die weiterbehandelnde Praxis; die Patientin
+  erhält ein Exemplar. Der Entlass-Assistent erklärt genau diesen Brief in einfacher Sprache.
+- Der Prüf-Agent findet nicht in jedem Lauf einen Fehler – das ist echt, nicht inszeniert.
+- Laufzeit: erster Entwurf ca. 30–45 s, Aktualisierung ca. 15–30 s.
+- Die Freigabe ist kein elektronisches Signieren; Agenten-Prüfung ersetzt nicht die ärztliche
+  Verantwortung.
 
-## Wenn etwas anders aussieht
+## Wenn etwas hakt
 
-- Vorhandener Entwurf: gespeicherter Zustand, kein automatischer KI-Aufruf.
-  Vor der Sitzung explizit zuruecksetzen oder vom aktuellen Schritt fortfahren.
-- Agentenfehler: sichtbar benennen; Anmeldung/Quelle pruefen und bewusst neu
-  starten. Nicht als erfolgreiche KI-Antwort darstellen.
-- Scan nicht konfiguriert: Kapitel B auslassen; keinen vorbereiteten Text als
-  echte OCR verkaufen.
-- Geaenderte Quelle/gesperrte Aktion: aktuellen Stand laden und erneut pruefen.
-  Ungespeicherte manuelle Texte vorher sichern.
-- **Probenmodus** ist nur eine klar gekennzeichnete Textprobe und kein Ersatz
-  fuer den Agentenablauf.
-
-## Reset nach der Probe
-
-**Praesentationssteuerung > Demo zuruecksetzen > Bestaetigung >
-Alle drei Faelle zuruecksetzen.** Dies betrifft alle drei lokalen Demo-Faelle,
-Aufgaben, Briefe und Agentenlaeufe. Ein Snapshot bleibt in derselben lokalen
-Datenbank; es gibt keine Wiederherstellungsoberflaeche. Ein Serverneustart
-setzt die Faelle nicht zurueck.
+| Problem | Lösung |
+|---|---|
+| Fehlermeldung im Protokoll | **↺ Zurücksetzen**, Anmeldung prüfen (`az login`), erneut starten |
+| Prüf-Agent zeigt „überarbeiten“ nach zwei Runden | Offen ansprechen: „Genau dafür gibt es die ärztliche Freigabe.“ |
+| Ereignis-Knopf ausgegraut | Erst nach dem ersten Entwurf aktiv, und nur einmal pro Durchlauf |

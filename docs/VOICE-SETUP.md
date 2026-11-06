@@ -73,11 +73,11 @@ Checks:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q     # local, no Azure calls
-.\.venv\Scripts\python.exe smoke_test.py   # live, 8 typed cases in 5 languages
+.\.venv\Scripts\python.exe smoke_test.py   # live, 9 typed cases in 5 languages
 ```
 
 The live test opens real voice sessions with typed input and checks grounding
-(letter sections, dates, doses), the medication-change refusal, 112 for acute
+(letter sections, dates, doses), the explanation of medical jargon, the medication-change refusal, 112 for acute
 symptoms, urgent callbacks for warning signs, callbacks for unanswered
 questions, and a mid-conversation language switch. Then rehearse with the
 microphone using the [presenter script](VOICE-SCRIPT-DE.md): speech recognition,
