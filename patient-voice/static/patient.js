@@ -49,7 +49,7 @@ const UI = {
 const NAMES = { de: "Deutsch", en: "English", tr: "Türkçe", ar: "العربية", uk: "Українська" };
 
 let lang = "de", letter = null, ws = null, ctx = null, mic = null, micSource = null, micMeter = null, voiceMeter = null;
-let emergencyShown = false, medicationCardShown = false;
+let emergencyShown = false, medicationCardShown = false, pendingCard = null, readyCard = null;
 let voiceBus = null, playTime = 0, playing = [], muted = false, pendingSources = [], readySources = [], queuedText = null, withMic = false;
 
 const t = (key) => UI[lang][key];
@@ -177,16 +177,24 @@ function onEvent(msg) {
       break;
     case "transcript":
       if (msg.role === "patient") addBubble("patient", msg.text);
-      else { addBubble("assistant", msg.text, msg.stopped ? [] : readySources, msg.stopped); if (!msg.stopped) readySources = []; }
+      else {
+        addBubble("assistant", msg.text, msg.stopped ? [] : readySources, msg.stopped);
+        if (!msg.stopped) { readySources = []; if (readyCard) { showMedicationCard(readyCard); readyCard = null; } }
+      }
       break;
     case "tool": onTool(msg); break;
-    case "medication_card": showMedicationCard(msg); break;
+    // Shown below the answer that used the medication section (spoken questions are transcribed late).
+    case "medication_card": if (!medicationCardShown) pendingCard = msg; break;
     case "guard": stopPlayback(); muted = true; notice("guard", t("guard"), t("guardText")); break;
     case "guard_final": notice("guard", t("guard"), t("guardFinal")); break;
     case "rule_emergency": if (!emergencyShown) { emergencyShown = true; notice("emergency", t("emergency"), t("emergencyText")); } break;
     case "interrupt": stopPlayback(); muted = true; break;
     // Sources belong to the reply that follows the tool call, not to the "let me check" preamble.
-    case "response_started": muted = false; if (pendingSources.length) { readySources = pendingSources; pendingSources = []; } break;
+    case "response_started":
+      muted = false;
+      if (pendingSources.length) { readySources = pendingSources; pendingSources = []; }
+      if (pendingCard) { readyCard = pendingCard; pendingCard = null; }
+      break;
     case "error": setStatus(msg.text, true); break;
   }
 }
