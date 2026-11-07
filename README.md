@@ -17,7 +17,7 @@ fictional.
 [Voice presenter script](docs/VOICE-SCRIPT-DE.md)
 
 **Slides:** [German use-case and architecture deck](docs/slides/Healthcare-Agent-Demos-DE.pptx)
-— six editable slides, with speaker notes, covering all three demonstrations.
+— seven editable slides, with speaker notes, covering all three demonstrations and the voice agent's guardrails.
 
 ## What is real, and what is simulated?
 
