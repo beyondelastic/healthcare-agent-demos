@@ -42,6 +42,35 @@ Typing works as well as speaking, useful for noisy rooms.
 
 German presenter script: [docs/VOICE-SCRIPT-DE.md](../docs/VOICE-SCRIPT-DE.md) · Setup guide: [docs/VOICE-SETUP.md](../docs/VOICE-SETUP.md).
 
+## Safety layers (no medical advice, no mix-ups)
+
+No single layer can guarantee this; the demo combines several independent ones:
+
+1. **Architecture:** the agent has no letter content in its prompt and no tool that changes
+   treatment. The **medication card** on the patient page is rendered from the approved letter
+   (`medication_plan` in [letter.json](letter.json)), never from what the model says.
+2. **Rules in the app** ([safety.py](safety.py)), applied to every spoken answer *while it
+   streams*: drugs must be in the letter (or named by the patient), doses must match the letter
+   and the right drug ("Ramipril 10 mg" is a mix-up), and advice phrases ("Sie können … absetzen")
+   are blocked. A violating answer is stopped, the patient sees a notice, the team gets a
+   *Sicherheitsprüfung* request, and the agent answers again from the letter. Acute danger signs in
+   the patient's words show the 112 notice by rule, even if the model doesn't react.
+3. **Foundry guardrail** ([setup_guardrail.py](setup_guardrail.py), assigned to the agent through
+   `rai_config`): content-harm controls, Prompt Shields (jailbreak, indirect attacks in tool
+   results), Task Adherence (preview) on tool calls, and a custom blocklist with the same advice
+   phrases. *Finding in the reference build:* the guardrail is stored on the voice agent and is
+   enforced for text prompt agents, but realtime voice sessions did not enforce the blocklist
+   (preview). That is why the app enforces the same list itself.
+4. **Tests:** local unit tests for the rules, the live smoke test (every answer must also pass the
+   app's check), and [e2e_safety_test.py](e2e_safety_test.py) through the running app.
+
+To show the stop live: on `/team`, select **Fehler einschleusen (Demo)**. The next medication
+lookup returns "Ramipril 10 mg" (a simulated mix-up); the check stops the answer.
+
+The rules are word lists and patterns: auditable and fast, but not complete (e.g. drug names in
+scripts or brands not on the list). Production use needs clinical review of the lists, the
+regulatory classification under the EU Medical Device Regulation (MDR), and clinical validation.
+
 Simulated: QR identity verification, the hospital portal, the letter source, and staff
 notification (an in-memory list, cleared on restart or with **Demo zurücksetzen**).
 
@@ -59,7 +88,8 @@ flowchart LR
 Copy-Item .env.example .env      # set FOUNDRY_PROJECT_ENDPOINT and AZURE_TENANT_ID
 az login --tenant <tenant-id>
 .\Start-VoiceDemo.ps1 -Install    # first run: creates .venv and installs dependencies
-.\.venv\Scripts\python.exe create_agent.py   # creates a new agent version
+.\.venv\Scripts\python.exe setup_guardrail.py  # optional: Foundry guardrail + blocklist (needs FOUNDRY_ACCOUNT_RESOURCE_ID)
+.\.venv\Scripts\python.exe create_agent.py   # creates a new agent version (assigns the guardrail if set up)
 .\Start-VoiceDemo.ps1
 ```
 
@@ -69,8 +99,9 @@ Python 3.11+, and Edge or Chrome with a microphone. Port 8010 avoids clashing wi
 Checks:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest -q        # local, no Azure calls (incl. simulated connection drop)
+.\.venv\Scripts\python.exe -m pytest -q        # local, no Azure calls (incl. safety rules, simulated connection drop)
 .\.venv\Scripts\python.exe smoke_test.py      # live: 9 typed cases in 5 languages against the real agent
+.\.venv\Scripts\python.exe e2e_safety_test.py # live, app running: medication card, stopped mix-up, 112 rule
 ```
 
 The smoke test verifies grounding (letter sections read, dates and doses correct), the

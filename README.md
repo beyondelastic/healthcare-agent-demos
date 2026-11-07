@@ -24,7 +24,7 @@ fictional.
 Real: Foundry prompt agents (writer and reviewer) with function tools and
 structured output, Fabric Lakehouse tables and live
 queries, Teams publication and signed-in access, and the Foundry voice agent
-(realtime speech, multilingual voice, function tools).
+(realtime speech, multilingual voice, function tools), its Foundry guardrail, and the app's safety checks that stop answers deviating from the letter.
 
 Simulated: hospital source systems and their data, the medication-release event,
 approval, KIM/ePA sending, the

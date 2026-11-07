@@ -75,9 +75,11 @@ individual identifiers is a behavior guardrail, not a security guarantee.
 ```mermaid
 flowchart LR
     P[Patient browser: voice or text] <-- WebSocket --> R[FastAPI relay on loopback]
-    R <-- realtime voice session, Entra ID --> V[Foundry voice agent: managed realtime model]
+    R <-- realtime voice session, Entra ID --> V[Foundry voice agent: managed realtime model + guardrail]
     R --> T[Function tools: approved letter, callback requests]
+    R --> G[Safety rules: answer check, 112 rule]
     T --> S[Care-team view]
+    G --> S
 ```
 
 The patient opens the page from a QR code on their copy of the approved
@@ -93,6 +95,29 @@ reconnects automatically if the realtime connection drops.
 Spoken translations are not clinically validated. Production use would need
 patient-portal identity, letters from the hospital system, a real ward worklist,
 clinically approved emergency wording, and HTTPS access for phones.
+
+Safety layers against medical advice and medication mix-ups (none is a guarantee
+alone):
+
+- **Architecture:** facts only through the letter tool; no tool can change treatment;
+  the medication card is rendered from the approved letter, not from the model.
+- **App rules** (`safety.py`), applied to each answer while it streams: drug names and
+  doses must match the letter (right dose for the right drug), no other drugs unless the
+  patient named them, no advice phrases. A violating answer is stopped before it is fully
+  spoken, the team gets a safety request, and the agent answers again. Acute danger
+  terms in five languages show the 112 notice by rule. Word lists and patterns are
+  auditable but incomplete.
+- **Foundry guardrail** (preview, `rai_config` on the agent): content harms, Prompt
+  Shields, Task Adherence on tool calls, and a custom blocklist with the same advice
+  phrases. In the reference build it was enforced for a text prompt agent but not in
+  realtime voice sessions; re-test before relying on it. Task Adherence checks whether
+  a tool call fits the request; it doesn't detect advice in spoken text. Groundedness
+  detection isn't available for agents.
+- **Tests:** unit tests for the rules, live smoke test, and an end-to-end test that
+  injects a wrong dose.
+
+A patient-facing assistant with medical content requires a regulatory assessment
+under the EU Medical Device Regulation (MDR, 2017/745) and clinical validation.
 
 ## Before any real hospital use
 

@@ -29,6 +29,7 @@ from azure.ai.projects.models import (
     RealtimeServerEventError,
     RealtimeServerEventInputAudioBufferSpeechStarted,
     RealtimeServerEventResponseAudioDelta,
+    RealtimeServerEventResponseAudioTranscriptDelta,
     RealtimeServerEventResponseAudioTranscriptDone,
     RealtimeServerEventResponseCreated,
     RealtimeServerEventResponseDone,
@@ -39,6 +40,7 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.websockets import WebSocketState
 
+import safety
 import settings
 import tools
 
@@ -113,6 +115,13 @@ async def reset():
     return {"ok": True}
 
 
+@app.post("/api/demo/fault")
+async def arm_fault():
+    """Demo: the next medication lookup returns a wrong Ramipril dose, so the safety check can be shown."""
+    tools.FAULT["armed"] = not tools.FAULT["armed"]
+    return {"armed": tools.FAULT["armed"]}
+
+
 def system_item(text: str):
     return RealtimeConversationItemMessageSystem(
         content=[RealtimeConversationItemMessageSystemContent(type="input_text", text=text)])
@@ -148,7 +157,8 @@ async def voice_session(browser: WebSocket):
     greet = browser.query_params.get("greet", "1") != "0"
     session_id = tools.start_session(language)
     client: AIProjectClient = app.state.client
-    state = {"response_active": False, "respond_after": False, "session": session_id}
+    state = {"response_active": False, "respond_after": False, "session": session_id,
+             "answer": "", "stopped": None, "corrections": 0}
     reconnects = 0
     try:
         await browser.send_json({"type": "config", "channels": 1, "session": session_id})
@@ -231,6 +241,7 @@ async def browser_to_agent(browser: WebSocket, agent, state: dict):
         if data.get("type") == "text" and data.get("text", "").strip():
             text = data["text"].strip()[:1000]
             tools.log(state["session"], "patient", text, channel="text")
+            await on_patient_text(browser, state, text)
             await agent.conversation.item.create(item=RealtimeConversationItemMessageUser(
                 content=[RealtimeConversationItemMessageUserContent(type="input_text", text=text)]))
             await request_response(agent, state)
@@ -241,15 +252,44 @@ async def browser_to_agent(browser: WebSocket, agent, state: dict):
             await request_response(agent, state)
 
 
+async def on_patient_text(browser: WebSocket, state: dict, text: str):
+    """Rule-based checks on the patient's words, independent of the model."""
+    state["corrections"] = 0
+    term = safety.detect_emergency(text)
+    if term and tools.rule_emergency(state["session"], term, text):
+        print(f"Safety rule: emergency term '{term}'")
+        await browser.send_json({"type": "rule_emergency", "term": term})
+
+
+async def stop_answer(agent, browser: WebSocket, state: dict, problem: dict):
+    """The streaming answer contradicts the approved letter: stop it before it is (fully) spoken."""
+    state["stopped"] = problem
+    print(f"Safety check stopped an answer: {problem['reason']}")
+    await browser.send_json({"type": "guard", "rule": problem["rule"], "reason": problem["reason"]})
+    if state["response_active"]:
+        await agent.response.cancel()
+    tools.record_safety_stop(state["session"], problem, state["answer"], tools.patient_text(state["session"]))
+
+
+def correction_prompt(problem: dict) -> str:
+    return ("SAFETY CHECK: the app stopped your last answer because it did not match the approved letter "
+            f"({problem['reason']}). Do not repeat that statement. Call get_discharge_information again for the "
+            "relevant section, then answer briefly using only the exact drug names and doses from the letter, in "
+            "the language of the patient's most recent message. Say that the care team has been informed and will "
+            "call back about the medication.")
+
+
 async def agent_to_browser(agent, browser: WebSocket, state: dict):
     """Relay agent events to the browser and execute function tool calls."""
     pending_outputs = []
     async for event in agent:
         if isinstance(event, RealtimeServerEventResponseAudioDelta):
-            await browser.send_bytes(event.delta)
+            if not state["stopped"]:
+                await browser.send_bytes(event.delta)
 
         elif isinstance(event, RealtimeServerEventResponseCreated):
             state["response_active"] = True
+            state["answer"], state["stopped"] = "", None
             await browser.send_json({"type": "response_started"})
 
         elif isinstance(event, RealtimeServerEventInputAudioBufferSpeechStarted):
@@ -261,10 +301,20 @@ async def agent_to_browser(agent, browser: WebSocket, state: dict):
             text = (event.transcript or "").strip()
             tools.log(state["session"], "patient", text)
             await browser.send_json({"type": "transcript", "role": "patient", "text": text})
+            await on_patient_text(browser, state, text)
+
+        elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDelta):
+            state["answer"] += event.delta or ""
+            if not state["stopped"]:
+                problem = safety.check_answer(state["answer"], tools.patient_text(state["session"]))
+                if problem:
+                    await stop_answer(agent, browser, state, problem)
 
         elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
-            tools.log(state["session"], "assistant", event.transcript)
-            await browser.send_json({"type": "transcript", "role": "assistant", "text": event.transcript})
+            stopped = state["stopped"]
+            tools.log(state["session"], "assistant", ("[GESTOPPT] " if stopped else "") + (event.transcript or ""))
+            await browser.send_json({"type": "transcript", "role": "assistant", "text": event.transcript,
+                                     "stopped": bool(stopped)})
 
         elif isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
             try:
@@ -275,9 +325,23 @@ async def agent_to_browser(agent, browser: WebSocket, state: dict):
             print(f"Tool call: {event.name}({args}) -> ok={result.get('ok')}")
             pending_outputs.append((event.call_id, result))
             await browser.send_json({"type": "tool", "name": event.name, "args": args, "result": result})
+            if event.name == "get_discharge_information" and "medication" in args.get("section_ids", []):
+                # Shown from the approved letter itself, not from what the model says or the tool returned.
+                await browser.send_json({"type": "medication_card", "plan": safety.MEDICATIONS,
+                                         "source": tools.LETTER["letter_id"],
+                                         "approved_at": tools.LETTER["approval"]["approved_at"]})
 
         elif isinstance(event, RealtimeServerEventResponseDone):
             state["response_active"] = False
+            if state["stopped"]:
+                problem, state["stopped"] = state["stopped"], None
+                pending_outputs.clear()
+                state["corrections"] += 1
+                if state["corrections"] <= 1:
+                    await agent.conversation.item.create(item=system_item(correction_prompt(problem)))
+                    state["respond_after"] = True
+                else:
+                    await browser.send_json({"type": "guard_final"})
             if pending_outputs:
                 for call_id, result in pending_outputs:
                     await agent.conversation.item.create(item=RealtimeConversationItemFunctionCallOutput(

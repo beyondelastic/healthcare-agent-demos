@@ -6,10 +6,12 @@ Every run saves a new, immutable agent version; the endpoint uses the latest.
 """
 
 from datetime import timedelta
+import json
 from pathlib import Path
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    RaiConfig,
     RealtimeAudioFormatsAudioPcm,
     RealtimeFunctionToolParameters,
     VoiceAgentAudioConfig,
@@ -32,10 +34,19 @@ from tools import TOOL_SCHEMAS
 ROOT = Path(__file__).parent
 
 
+def guardrail():
+    """Foundry guardrail from setup_guardrail.py, if present (otherwise the platform default applies)."""
+    path = ROOT / ".guardrail.json"
+    if not path.exists():
+        return None
+    return RaiConfig(rai_policy_name=json.loads(path.read_text(encoding="utf-8"))["rai_policy_id"])
+
+
 def build_definition() -> VoiceAgentDefinition:
     return VoiceAgentDefinition(
         model_type=VoiceModelType.MANAGED,
         model=settings.MODEL,
+        rai_config=guardrail(),
         instructions=(ROOT / "instructions.md").read_text(encoding="utf-8"),
         # No fixed greeting: app.py starts each session in the language the patient selected.
         audio=VoiceAgentAudioConfig(
@@ -72,8 +83,10 @@ def main():
             description="Synthetic demo: explains an approved discharge letter by voice; staff hand-off.",
             metadata={"demo": "patient-discharge-voice", "synthetic_only": "true"},
         )
+        rail = created.definition.get("rai_config") if hasattr(created.definition, "get") else None
         print(f"Voice agent '{settings.AGENT_NAME}' saved as version {created.version} "
-              f"(model {settings.MODEL}, voice {settings.VOICE}, transcription {settings.TRANSCRIPTION_MODEL})")
+              f"(model {settings.MODEL}, voice {settings.VOICE}, transcription {settings.TRANSCRIPTION_MODEL}, "
+              f"guardrail {(rail or {}).get('rai_policy_name', 'platform default').rsplit('/', 1)[-1]})")
 
 
 if __name__ == "__main__":

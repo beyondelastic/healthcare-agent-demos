@@ -21,6 +21,9 @@ URGENCY = ["routine", "urgent", "emergency"]
 _lock = threading.Lock()
 SESSIONS: dict[str, dict] = {}
 REQUESTS: list[dict] = []
+# Demo only: the next medication lookup returns a wrong Ramipril dose, to show the safety check.
+FAULT = {"armed": False}
+FAULT_TEXT = ("Ramipril 5 mg", "Ramipril 10 mg")
 
 
 def letter_summary() -> dict:
@@ -57,6 +60,10 @@ def get_discharge_information(section_ids, session_id=None):
     if unknown or not section_ids:
         return {"ok": False, "message": f"Unknown sections {unknown}. Valid: {', '.join(SECTIONS)}."}
     sections = [SECTIONS[s] for s in dict.fromkeys(section_ids)]
+    if FAULT["armed"] and any(s["id"] == "medication" for s in sections):
+        FAULT["armed"] = False
+        sections = [dict(s, text=s["text"].replace(*FAULT_TEXT)) if s["id"] == "medication" else s
+                    for s in sections]
     if session_id:
         with _lock:
             session = SESSIONS.get(session_id)
@@ -79,12 +86,26 @@ def request_staff_callback(category, urgency, summary_de, patient_question, sess
     if not summary_de or not summary_de.strip():
         return {"ok": False, "message": "summary_de is required."}
     with _lock:
+        if urgency == "emergency":
+            # The rule may already have raised this emergency: complete that request instead of a duplicate.
+            for request in reversed(REQUESTS):
+                if (request["session_id"] == session_id and request["urgency"] == "emergency"
+                        and request.get("origin") == "regel" and time.time() - request["created"] < 300):
+                    request.update(summary_de=summary_de.strip(), origin="regel+agent",
+                                   patient_question=(patient_question or "").strip() or request["patient_question"])
+                    return {"ok": True, "request_id": request["id"], "urgency": urgency,
+                            "message": "Emergency already recorded for the clinical team (demo)."}
+    return _add_request(session_id, category, urgency, summary_de.strip(), (patient_question or "").strip(), "agent")
+
+
+def _add_request(session_id, category, urgency, summary_de, patient_question, origin, **extra) -> dict:
+    with _lock:
         language = SESSIONS.get(session_id, {}).get("language")
         request = {"id": uuid.uuid4().hex[:6].upper(), "session_id": session_id, "created": time.time(),
-                   "category": category, "urgency": urgency, "summary_de": summary_de.strip(),
-                   "patient_question": (patient_question or "").strip(), "language": language,
+                   "category": category, "urgency": urgency, "summary_de": summary_de,
+                   "patient_question": patient_question, "language": language,
                    "patient": LETTER["patient"]["name"], "case_id": LETTER["patient"]["case_id"],
-                   "status": "offen"}
+                   "status": "offen", "origin": origin, **extra}
         REQUESTS.append(request)
         if session_id in SESSIONS:
             SESSIONS[session_id]["requests"].append(request["id"])
@@ -92,15 +113,41 @@ def request_staff_callback(category, urgency, summary_de, patient_question, sess
             "message": "Request recorded for the clinical team (demo, no real notification)."}
 
 
+def rule_emergency(session_id, term, patient_text) -> bool:
+    """112 rule matched in the patient's words. Returns False if this session already has an emergency."""
+    with _lock:
+        if any(r["session_id"] == session_id and r["urgency"] == "emergency" for r in REQUESTS):
+            return False
+    _add_request(session_id, "symptoms", "emergency",
+                 f"Regel-Erkennung: akutes Warnzeichen („{term}“). 112-Hinweis wurde sofort angezeigt.",
+                 patient_text, "regel")
+    return True
+
+
+def record_safety_stop(session_id, problem, answer, patient_text) -> dict:
+    """The app stopped an answer that didn't match the approved letter; the team reviews it."""
+    return _add_request(session_id, "safety", "urgent",
+                        f"Sicherheitsprüfung hat eine Antwort gestoppt: {problem['reason']} "
+                        "Patientin bitte zur Medikation kontaktieren.",
+                        patient_text, "regel", stopped_answer=answer)
+
+
+def patient_text(session_id) -> str:
+    with _lock:
+        return " ".join(line["text"] for line in SESSIONS.get(session_id, {}).get("transcript", [])
+                        if line["role"] == "patient")
+
+
 def reset():
     with _lock:
         SESSIONS.clear()
         REQUESTS.clear()
+        FAULT["armed"] = False
 
 
 def staff_view() -> dict:
     with _lock:
-        return {"requests": list(reversed(REQUESTS)),
+        return {"requests": list(reversed(REQUESTS)), "fault_armed": FAULT["armed"],
                 "sessions": sorted((dict(s) for s in SESSIONS.values()), key=lambda s: -s["started"])}
 
 

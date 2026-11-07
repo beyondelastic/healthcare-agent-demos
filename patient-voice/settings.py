@@ -14,6 +14,8 @@ MODEL = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL", "gpt-realtime-2.1")
 VOICE = os.environ.get("FOUNDRY_VOICE_AGENT_VOICE", "de-DE-Seraphina:DragonHDLatestNeural")
 TRANSCRIPTION_MODEL = os.environ.get("FOUNDRY_VOICE_TRANSCRIPTION_MODEL", "gpt-4o-transcribe")
 PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "http://127.0.0.1:8010").rstrip("/")
+# Foundry resource (account) ARM ID, only needed for setup_guardrail.py
+ACCOUNT_RESOURCE_ID = os.environ.get("FOUNDRY_ACCOUNT_RESOURCE_ID", "").strip()
 
 # Languages offered on the patient page: code -> (English name for the agent, BCP-47 locale)
 LANGUAGES = {

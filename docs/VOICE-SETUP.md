@@ -57,6 +57,22 @@ audio settings, and two function tools. There is no separate deployment step.
 Turn detection uses the language-independent Azure semantic VAD. The multilingual
 variant rejected Ukrainian (`Unsupported locales: uk-UA`) in the reference build.
 
+### Optional: Foundry guardrail
+
+Set `FOUNDRY_ACCOUNT_RESOURCE_ID` (Foundry resource > JSON view > ID) in `.env`, then run
+`setup_guardrail.py` **before** `create_agent.py`. It needs Foundry Account Owner (or
+Contributor) on the resource and creates:
+
+- the guardrail (RAI policy) `patient-voice-guardrail`: content-harm controls, Prompt Shields
+  (jailbreak in input, indirect attacks in tool results), Task Adherence (preview) on tool calls;
+- the blocklist `patientvoiceadvice` with advice phrases (same list as `safety.py`), on output.
+
+`create_agent.py` then assigns it through `rai_config`; check it under **Guardrails** in the
+Foundry portal. In the reference build the guardrail blocked these phrases for a text prompt
+agent, but realtime voice sessions did **not** enforce the blocklist (preview). The app's own
+checks ([safety.py](../patient-voice/safety.py)) therefore enforce the same list; see
+[architecture](ARCHITECTURE.md). Groundedness detection isn't available for agents.
+
 ## 4. Start and check
 
 ```powershell
@@ -72,14 +88,17 @@ variant rejected Ukrainian (`Unsupported locales: uk-UA`) in the reference build
 Checks:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest -q     # local, no Azure calls
+.\.venv\Scripts\python.exe -m pytest -q     # local, no Azure calls (incl. safety rules)
 .\.venv\Scripts\python.exe smoke_test.py   # live, 9 typed cases in 5 languages
+.\.venv\Scripts\python.exe e2e_safety_test.py   # live, app running: card, stopped mix-up, 112 rule
 ```
 
 The live test opens real voice sessions with typed input and checks grounding
 (letter sections, dates, doses), the explanation of medical jargon, the medication-change refusal, 112 for acute
 symptoms, urgent callbacks for warning signs, callbacks for unanswered
-questions, and a mid-conversation language switch. Then rehearse with the
+questions, and a mid-conversation language switch; every answer must also pass
+the app's safety check. The safety test runs through the app and injects a wrong
+dose to confirm it is stopped. Then rehearse with the
 microphone using the [presenter script](VOICE-SCRIPT-DE.md): speech recognition,
 turn-taking, voice quality and latency can only be judged by ear.
 
@@ -95,6 +114,8 @@ no user authentication of its own; never expose it publicly.
 ## Completion checklist
 
 - Live smoke test passes; answers show their letter section.
+- Live safety test passes (medication card, stopped mix-up, 112 rule).
+- The **Fehler einschleusen (Demo)** button on `/team` is off (reset) before the presentation.
 - A medication question and a fever report create callbacks on `/team`.
 - Chest pain produces an immediate 112 instruction and an emergency entry.
 - Speaking another language mid-conversation switches the answer language.

@@ -21,6 +21,7 @@ from azure.ai.projects.models import (
     RealtimeServerEventResponseFunctionCallArgumentsDone,
 )
 
+import safety
 import settings
 import tools
 from app import language_context, system_item
@@ -103,6 +104,9 @@ def check(case, answer, calls):
             problems.append(f"expected callback {case['callback']}, got {callbacks or 'none'}")
     if not answer.strip():
         problems.append("empty spoken answer")
+    stop = safety.check_answer(answer, case["text"] + " " + " ".join(case.get("before", [])))
+    if stop:
+        problems.append(f"app safety check would stop this answer: {stop['reason']}")
     return problems
 
 

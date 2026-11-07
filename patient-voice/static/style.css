@@ -168,3 +168,18 @@ details summary { cursor: pointer; font-size: 13.5px; color: var(--brand); margi
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .tags span { font-size: 12px; background: var(--brand-soft); color: var(--brand-dark); border-radius: 999px; padding: 2px 8px; }
 @media (max-width: 860px) { .columns { grid-template-columns: 1fr; } }
+
+/* Safety layer: medication card from the approved letter, stopped answers */
+.med-card { background: #fff; border: 2px solid #0b6e8a; border-radius: 14px; padding: 12px 14px; margin: 8px 0; font-size: 14px; }
+.med-card strong { display: block; color: #0b3a53; margin-bottom: 8px; }
+.med-card table { width: 100%; border-collapse: collapse; }
+.med-card th { text-align: start; font-size: 12px; color: #546b65; font-weight: 600; padding: 4px 6px; border-bottom: 1px solid #cdebf3; }
+.med-card td { padding: 6px; border-bottom: 1px solid #eef5f8; vertical-align: top; }
+.med-card td.drug { font-weight: 700; color: #0b3a53; white-space: nowrap; }
+.med-card small { display: block; margin-top: 6px; color: #546b65; }
+.notice.guard { background: #fff4e5; border: 1px solid #e8a33d; color: #6b3d00; }
+.bubble.stopped { opacity: .55; text-decoration: line-through; text-decoration-color: #c0392b; }
+.staff .head-actions { display: flex; gap: 8px; }
+.staff header button#fault.armed { background: #fff4e5; border-color: #e8a33d; color: #6b3d00; font-weight: 600; }
+.card .quote.stopped { color: #a33a2c; text-decoration: line-through; }
+.card.safety { border-left: 4px solid #e8a33d; }

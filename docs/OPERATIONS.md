@@ -32,6 +32,8 @@
 | Voice: "Verbindung wird wiederhergestellt …" | The realtime connection dropped; the app reconnects up to three times and passes the recent conversation. Keep talking. If it fails, end and restart the conversation. |
 | Voice: no callback on `/team` | Use a question that requires one (medication change, fever, unanswered question); the page refreshes every 3 seconds. Requests are in memory and cleared on restart. |
 | Voice: microphone blocked on a phone | Browsers need `https://` or `localhost`; use the laptop or an HTTPS tunnel/deployment. |
+| Voice: an answer is stopped unexpectedly | The app's safety check found a drug, dose or phrase not in the letter (reason on `/team`, *Sicherheitsprüfung*). Expected if **Fehler einschleusen** was armed; otherwise review the word lists in `safety.py`. |
+| Voice: `setup_guardrail.py` fails with 403 | Needs Foundry Account Owner or Contributor on the Foundry resource and `FOUNDRY_ACCOUNT_RESOURCE_ID`. The demo runs without the guardrail; the app's checks still apply. |
 
 ## Reset and recovery
 

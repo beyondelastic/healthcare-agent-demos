@@ -13,7 +13,10 @@
         <h1>Rückfragen aus dem Entlass-Assistenten</h1>
         <div class="sub">Station Allgemein- und Viszeralchirurgie · fiktive Demo · aktualisiert automatisch</div>
       </div>
-      <button id="reset" type="button">Demo zurücksetzen</button>
+      <div class="head-actions">
+        <button id="fault" type="button" title="Demo: Die nächste Medikationsabfrage liefert eine falsche Ramipril-Dosis">Fehler einschleusen (Demo)</button>
+        <button id="reset" type="button">Demo zurücksetzen</button>
+      </div>
     </header>
     <div class="columns">
       <section class="panel">
@@ -28,7 +31,8 @@
   </main>
   <script>
     const LANG = { de: "Deutsch", en: "Englisch", tr: "Türkisch", ar: "Arabisch", uk: "Ukrainisch" };
-    const CATEGORY = { medication: "Medikation", appointment: "Termin", symptoms: "Beschwerden", pending_result: "Ausstehender Befund", other: "Sonstiges" };
+    const CATEGORY = { medication: "Medikation", appointment: "Termin", symptoms: "Beschwerden", pending_result: "Ausstehender Befund", other: "Sonstiges", safety: "Sicherheitsprüfung" };
+    const ORIGIN = { agent: "vom Agenten", regel: "Regel in der App", "regel+agent": "Regel + Agent" };
     const URGENCY = { emergency: "Notfall · 112 empfohlen", urgent: "Dringend", routine: "Routine" };
     const SECTION = { diagnoses: "Diagnosen", history: "Anamnese", findings: "Befunde", course: "Verlauf", medication: "Medikation", followup: "Procedere" };
     const time = (ts) => new Date(ts * 1000).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -36,6 +40,9 @@
 
     async function refresh() {
       const data = await (await fetch("/api/staff")).json();
+      const fault = document.getElementById("fault");
+      fault.classList.toggle("armed", data.fault_armed);
+      fault.textContent = data.fault_armed ? "Fehler scharf: nächste Medikationsfrage" : "Fehler einschleusen (Demo)";
       const requests = document.getElementById("requests");
       requests.innerHTML = "";
       if (!data.requests.length) requests.appendChild(el("div", "empty", "Noch keine Rückfragen."));
@@ -44,8 +51,9 @@
         const head = el("div", "card-head");
         head.append(el("strong", "", `${CATEGORY[r.category] || r.category} · ${r.patient} (${r.case_id})`), el("span", `pill ${r.urgency}`, URGENCY[r.urgency]));
         card.append(head, el("div", "summary", r.summary_de), el("div", "quote", `Originalfrage (${LANG[r.language] || r.language}): „${r.patient_question}“`));
+        if (r.stopped_answer) card.appendChild(el("div", "quote stopped", `Gestoppte Antwort: „${r.stopped_answer}“`));
         const meta = el("div", "meta");
-        meta.append(el("span", "", `Anfrage ${r.id} · ${time(r.created)} · ${r.status}`));
+        meta.append(el("span", "", `Anfrage ${r.id} · ${time(r.created)} · ${ORIGIN[r.origin] || "vom Agenten"} · ${r.status}`));
         if (r.status !== "erledigt") {
           const done = el("button", "", "Als erledigt markieren");
           done.onclick = async () => { await fetch(`/api/staff/${r.id}/done`, { method: "POST" }); refresh(); };
@@ -79,6 +87,7 @@
         sessions.appendChild(card);
       }
     }
+    document.getElementById("fault").onclick = async () => { await fetch("/api/demo/fault", { method: "POST" }); refresh(); };
     document.getElementById("reset").onclick = async () => {
       if (confirm("Alle Demo-Gespräche und Rückfragen löschen?")) { await fetch("/api/reset", { method: "POST" }); refresh(); }
     };

@@ -5,7 +5,7 @@ const SAMPLE_RATE = 24000;
 const $ = (id) => document.getElementById(id);
 
 const UI = {
-  de: { reconnecting: "Verbindung wird wiederhergestellt …", title: "Fragen zu Ihrem Entlassbrief", discharge: "Entlassung am", approved: "Ärztlich freigegeben",
+  de: { medTitle: "Ihr Medikationsplan – unverändert aus dem freigegebenen Brief", medCols: ["Medikament", "Stärke", "Einnahme", "Hinweis"], guard: "Antwort gestoppt", guardText: "Sie wich vom freigegebenen Brief ab. Es gilt der Medikationsplan oben. Das Team wurde informiert.", guardFinal: "Bitte halten Sie sich an Ihren Brief. Das Behandlungsteam ruft Sie zurück.", reconnecting: "Verbindung wird wiederhergestellt …", title: "Fragen zu Ihrem Entlassbrief", discharge: "Entlassung am", approved: "Ärztlich freigegeben",
         demo: "Demo: Zugang per QR-Code, Identitätsprüfung simuliert. Alle Daten sind fiktiv.",
         start: "Gespräch starten", stop: "Gespräch beenden", connecting: "Verbinde …", listening: "Ich höre zu. Sprechen Sie einfach.",
         ended: "Gespräch beendet.", ask: "Oder Frage eintippen …", send: "Senden",
@@ -13,7 +13,7 @@ const UI = {
         sos: "Notfall: 112", disclaimer: "Kein Ersatz für ärztliche Beratung.", letter: "Brief anzeigen",
         source: "Aus Ihrem Entlassbrief", callback: "Anfrage an das Behandlungsteam gesendet", callbackText: "Das Team meldet sich bei Ihnen. Dies ist kein Notdienst.",
         emergency: "Bitte rufen Sie jetzt den Notruf 112.", emergencyText: "Das Behandlungsteam wurde zusätzlich informiert.", micError: "Kein Mikrofon verfügbar. Sie können Ihre Frage eintippen." },
-  en: { reconnecting: "Reconnecting …", title: "Questions about your discharge letter", discharge: "Discharged on", approved: "Approved by your doctor",
+  en: { medTitle: "Your medication plan – unchanged from the approved letter", medCols: ["Medicine", "Strength", "How to take", "Note"], guard: "Answer stopped", guardText: "It did not match your approved letter. The medication plan above applies. Your care team has been informed.", guardFinal: "Please follow your letter. Your care team will call you back.", reconnecting: "Reconnecting …", title: "Questions about your discharge letter", discharge: "Discharged on", approved: "Approved by your doctor",
         demo: "Demo: access via QR code, identity check simulated. All data is fictional.",
         start: "Start conversation", stop: "End conversation", connecting: "Connecting …", listening: "I'm listening. Just speak.",
         ended: "Conversation ended.", ask: "Or type your question …", send: "Send",
@@ -21,7 +21,7 @@ const UI = {
         sos: "Emergency: 112", disclaimer: "Not a substitute for medical advice.", letter: "Show letter",
         source: "From your discharge letter", callback: "Request sent to your care team", callbackText: "The team will contact you. This is not an emergency service.",
         emergency: "Please call the emergency number 112 now.", emergencyText: "Your care team has also been informed.", micError: "No microphone available. You can type your question." },
-  tr: { reconnecting: "Bağlantı yeniden kuruluyor …", title: "Taburcu mektubunuzla ilgili sorular", discharge: "Taburcu tarihi", approved: "Doktorunuz tarafından onaylandı",
+  tr: { medTitle: "İlaç planınız – onaylı mektuptan değiştirilmeden", medCols: ["İlaç", "Doz", "Kullanım", "Not"], guard: "Yanıt durduruldu", guardText: "Onaylı mektubunuzla uyuşmadı. Yukarıdaki ilaç planı geçerlidir. Tedavi ekibi bilgilendirildi.", guardFinal: "Lütfen mektubunuza uyun. Tedavi ekibi sizi arayacak.", reconnecting: "Bağlantı yeniden kuruluyor …", title: "Taburcu mektubunuzla ilgili sorular", discharge: "Taburcu tarihi", approved: "Doktorunuz tarafından onaylandı",
         demo: "Demo: QR kod ile erişim, kimlik doğrulama simüle edildi. Tüm veriler kurgusaldır.",
         start: "Konuşmayı başlat", stop: "Konuşmayı bitir", connecting: "Bağlanıyor …", listening: "Dinliyorum. Konuşabilirsiniz.",
         ended: "Konuşma sona erdi.", ask: "Veya sorunuzu yazın …", send: "Gönder",
@@ -29,7 +29,7 @@ const UI = {
         sos: "Acil: 112", disclaimer: "Tıbbi danışmanlığın yerini tutmaz.", letter: "Mektubu göster",
         source: "Taburcu mektubunuzdan", callback: "Tedavi ekibine talep gönderildi", callbackText: "Ekip sizinle iletişime geçecek. Bu bir acil servis değildir.",
         emergency: "Lütfen şimdi 112'yi arayın.", emergencyText: "Tedavi ekibi ayrıca bilgilendirildi.", micError: "Mikrofon yok. Sorunuzu yazabilirsiniz." },
-  ar: { reconnecting: "جارٍ إعادة الاتصال …", title: "أسئلة حول رسالة الخروج", discharge: "تاريخ الخروج", approved: "معتمدة من الطبيب",
+  ar: { medTitle: "خطة أدويتك – كما وردت في الرسالة المعتمدة دون تغيير", medCols: ["الدواء", "الجرعة", "طريقة التناول", "ملاحظة"], guard: "تم إيقاف الإجابة", guardText: "لم تتطابق مع رسالتك المعتمدة. خطة الأدوية أعلاه هي المعتمدة. تم إبلاغ فريق العلاج.", guardFinal: "يرجى الالتزام برسالتك. سيتصل بك فريق العلاج.", reconnecting: "جارٍ إعادة الاتصال …", title: "أسئلة حول رسالة الخروج", discharge: "تاريخ الخروج", approved: "معتمدة من الطبيب",
         demo: "عرض توضيحي: الدخول عبر رمز QR، والتحقق من الهوية محاكى. جميع البيانات خيالية.",
         start: "ابدأ المحادثة", stop: "إنهاء المحادثة", connecting: "جارٍ الاتصال …", listening: "أنا أستمع. تحدث فقط.",
         ended: "انتهت المحادثة.", ask: "أو اكتب سؤالك …", send: "إرسال",
@@ -37,7 +37,7 @@ const UI = {
         sos: "طوارئ: 112", disclaimer: "لا يغني عن الاستشارة الطبية.", letter: "عرض الرسالة",
         source: "من رسالة الخروج", callback: "تم إرسال طلب إلى فريق العلاج", callbackText: "سيتواصل معك الفريق. هذه ليست خدمة طوارئ.",
         emergency: "يرجى الاتصال برقم الطوارئ 112 الآن.", emergencyText: "تم إبلاغ فريق العلاج أيضاً.", micError: "لا يوجد ميكروفون. يمكنك كتابة سؤالك." },
-  uk: { reconnecting: "Відновлення з'єднання …", title: "Запитання щодо виписки", discharge: "Дата виписки", approved: "Затверджено лікарем",
+  uk: { medTitle: "Ваш план ліків – без змін із затвердженого листа", medCols: ["Ліки", "Доза", "Прийом", "Примітка"], guard: "Відповідь зупинено", guardText: "Вона не відповідала затвердженому листу. Діє план ліків вище. Команду лікування повідомлено.", guardFinal: "Будь ласка, дотримуйтеся листа. Команда лікування вам зателефонує.", reconnecting: "Відновлення з'єднання …", title: "Запитання щодо виписки", discharge: "Дата виписки", approved: "Затверджено лікарем",
         demo: "Демо: доступ через QR-код, перевірка особи змодельована. Усі дані вигадані.",
         start: "Почати розмову", stop: "Завершити розмову", connecting: "З'єднання …", listening: "Я слухаю. Просто говоріть.",
         ended: "Розмову завершено.", ask: "Або введіть запитання …", send: "Надіслати",
@@ -49,6 +49,7 @@ const UI = {
 const NAMES = { de: "Deutsch", en: "English", tr: "Türkçe", ar: "العربية", uk: "Українська" };
 
 let lang = "de", letter = null, ws = null, ctx = null, mic = null, micSource = null, micMeter = null, voiceMeter = null;
+let emergencyShown = false, medicationCardShown = false;
 let voiceBus = null, playTime = 0, playing = [], muted = false, pendingSources = [], readySources = [], queuedText = null, withMic = false;
 
 const t = (key) => UI[lang][key];
@@ -176,9 +177,13 @@ function onEvent(msg) {
       break;
     case "transcript":
       if (msg.role === "patient") addBubble("patient", msg.text);
-      else { addBubble("assistant", msg.text, readySources); readySources = []; }
+      else { addBubble("assistant", msg.text, msg.stopped ? [] : readySources, msg.stopped); if (!msg.stopped) readySources = []; }
       break;
     case "tool": onTool(msg); break;
+    case "medication_card": showMedicationCard(msg); break;
+    case "guard": stopPlayback(); muted = true; notice("guard", t("guard"), t("guardText")); break;
+    case "guard_final": notice("guard", t("guard"), t("guardFinal")); break;
+    case "rule_emergency": if (!emergencyShown) { emergencyShown = true; notice("emergency", t("emergency"), t("emergencyText")); } break;
     case "interrupt": stopPlayback(); muted = true; break;
     // Sources belong to the reply that follows the tool call, not to the "let me check" preamble.
     case "response_started": muted = false; if (pendingSources.length) { readySources = pendingSources; pendingSources = []; } break;
@@ -193,21 +198,48 @@ function onTool(msg) {
   }
   if (msg.name === "request_staff_callback") {
     const urgency = msg.args.urgency;
-    const box = document.createElement("div");
-    box.className = `notice ${urgency === "emergency" ? "emergency" : urgency === "urgent" ? "urgent" : "callback"}`;
-    const title = document.createElement("strong");
-    title.textContent = urgency === "emergency" ? t("emergency") : t("callback");
-    box.append(title, urgency === "emergency" ? t("emergencyText") : t("callbackText"));
-    appendToConversation(box);
+    if (urgency === "emergency") {
+      if (!emergencyShown) { emergencyShown = true; notice("emergency", t("emergency"), t("emergencyText")); }
+    } else notice(urgency === "urgent" ? "urgent" : "callback", t("callback"), t("callbackText"));
   }
 }
 
+function notice(kind, titleText, text) {
+  const box = document.createElement("div");
+  box.className = `notice ${kind}`;
+  const title = document.createElement("strong");
+  title.textContent = titleText;
+  box.append(title, text);
+  appendToConversation(box);
+}
+
+// The plan is rendered from the approved letter (sent by the server), never from the model's words.
+function showMedicationCard(msg) {
+  if (medicationCardShown) return;
+  medicationCardShown = true;
+  const card = document.createElement("div");
+  card.className = "med-card";
+  const title = document.createElement("strong");
+  title.textContent = `💊 ${t("medTitle")}`;
+  const table = document.createElement("table");
+  const head = table.insertRow();
+  t("medCols").forEach((label) => { const th = document.createElement("th"); th.textContent = label; head.appendChild(th); });
+  for (const m of msg.plan) {
+    const row = table.insertRow();
+    [`${m.name}`, `${m.strength} · ${m.form}`, m.schedule, m.note].forEach((v, i) => { const td = row.insertCell(); td.textContent = v; if (i === 0) td.className = "drug"; });
+  }
+  const foot = document.createElement("small");
+  foot.textContent = `${msg.source} · ${msg.approved_at}`;
+  card.append(title, table, foot);
+  appendToConversation(card);
+}
+
 // ---------- Conversation ----------
-function addBubble(role, text, sources = []) {
+function addBubble(role, text, sources = [], stopped = false) {
   if (!text) return;
   $("hint")?.remove();
   const bubble = document.createElement("div");
-  bubble.className = `bubble ${role}`;
+  bubble.className = `bubble ${role}${stopped ? " stopped" : ""}`;
   bubble.textContent = text;
   if (sources.length) {
     const chips = document.createElement("div");

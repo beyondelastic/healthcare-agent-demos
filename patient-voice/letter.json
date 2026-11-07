@@ -21,6 +21,11 @@
     "approved_at": "06.11.2026, 10:30 Uhr",
     "status": "ärztlich freigegeben"
   },
+  "medication_plan": [
+    {"name": "Ibuprofen", "strength": "400 mg", "form": "Tablette p.o.", "schedule": "bei Bedarf bei Schmerzen, max. 3 x täglich zu den Mahlzeiten", "note": "höchstens 5 Tage"},
+    {"name": "Pantoprazol", "strength": "20 mg", "form": "Tablette p.o.", "schedule": "1-0-0 vor dem Frühstück", "note": "solange Ibuprofen eingenommen wird"},
+    {"name": "Ramipril", "strength": "5 mg", "form": "Tablette p.o.", "schedule": "1-0-0", "note": "Hausmedikation, unverändert fortführen"}
+  ],
   "sections": [
     {
       "id": "diagnoses",
