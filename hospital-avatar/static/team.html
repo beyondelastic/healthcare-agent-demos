@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Information & Ambulanz · Empfangs-Avatar</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="team">
+    <header>
+      <div>
+        <h1>Information & Ambulanz-Anmeldung</h1>
+        <div class="sub">Was der Empfangs-Avatar im Foyer an das Team übergibt · fiktive Demo · aktualisiert automatisch</div>
+      </div>
+      <button id="reset" type="button">Demo zurücksetzen</button>
+    </header>
+    <div class="columns">
+      <section class="panel"><h2>Angemeldete Patientinnen und Patienten</h2><div id="checkins"></div></section>
+      <section class="panel"><h2>Hilfe am Kiosk</h2><div id="requests"></div></section>
+      <section class="panel"><h2>Gespräche am Kiosk</h2><div id="sessions"></div></section>
+    </div>
+  </main>
+  <script>
+    const LANG = { de: "Deutsch", en: "Englisch", tr: "Türkisch", ar: "Arabisch", uk: "Ukrainisch" };
+    const NEED = { escort: "Begleitung", wheelchair: "Rollstuhl", unwell: "Fühlt sich unwohl", question: "Frage / nicht gefunden", other: "Sonstiges" };
+    const ORIGIN = { agent: "vom Avatar", regel: "Regel in der App", "regel+agent": "Regel + Avatar" };
+    const TIMING = { early: "früh", on_time: "pünktlich", late: "verspätet" };
+    const time = (ts) => new Date(ts * 1000).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+    const done = (kind, id) => async () => { await fetch(`/api/team/${kind}/${id}/done`, { method: "POST" }); refresh(); };
+
+    async function refresh() {
+      const data = await (await fetch("/api/team")).json();
+      const checkins = document.getElementById("checkins");
+      checkins.innerHTML = "";
+      if (!data.checkins.length) checkins.appendChild(el("div", "empty", "Noch niemand angemeldet."));
+      for (const c of data.checkins) {
+        const card = el("div", `card checkin${c.status === "erledigt" ? " done" : ""}`);
+        const head = el("div", "card-head");
+        head.append(el("strong", "", `${c.last_name}, ${c.first_name}`), el("span", "pill ok", `Nr. ${c.waiting_number}`));
+        card.append(head, el("div", "", `${c.location_name} · ${c.kind} ${c.time} Uhr · angekommen ${c.arrived} (${TIMING[c.timing]})`),
+                    el("div", "note", `Nur für das Team: ${c.internal_note}`));
+        const meta = el("div", "meta");
+        meta.append(el("span", "", `${time(c.created)} · ${c.status}`));
+        if (c.status !== "erledigt") { const b = el("button", "", "Aufgerufen"); b.onclick = done("checkins", c.id); meta.appendChild(b); }
+        card.appendChild(meta);
+        checkins.appendChild(card);
+      }
+
+      const requests = document.getElementById("requests");
+      requests.innerHTML = "";
+      if (!data.requests.length) requests.appendChild(el("div", "empty", "Keine offenen Anfragen."));
+      for (const r of data.requests) {
+        const card = el("div", `card ${r.urgency}${r.status === "erledigt" ? " done" : ""}`);
+        const head = el("div", "card-head");
+        head.append(el("strong", "", NEED[r.need] || r.need), el("span", `pill ${r.urgency}`, r.urgency === "urgent" ? "Dringend – sofort hingehen" : "Routine"));
+        card.append(head, el("div", "", r.summary_de), el("div", "note", `${r.place} · Sprache: ${LANG[r.language] || r.language || "–"} · ${ORIGIN[r.origin] || r.origin}`));
+        const meta = el("div", "meta");
+        meta.append(el("span", "", `${time(r.created)} · ${r.status}`));
+        if (r.status !== "erledigt") { const b = el("button", "", "Erledigt"); b.onclick = done("requests", r.id); meta.appendChild(b); }
+        card.appendChild(meta);
+        requests.appendChild(card);
+      }
+
+      const sessions = document.getElementById("sessions");
+      const open = new Set([...sessions.querySelectorAll("details[open]")].map((d) => d.dataset.id));
+      sessions.innerHTML = "";
+      if (!data.sessions.length) sessions.appendChild(el("div", "empty", "Noch keine Gespräche."));
+      for (const s of data.sessions) {
+        const card = el("div", "card");
+        card.append(el("strong", "", `${LANG[s.language] || s.language} · ${time(s.started)}`),
+                    el("div", "note", s.actions.map((a) => a.label).join(" · ") || "–"));
+        const details = el("details");
+        details.dataset.id = s.id;
+        details.open = open.has(s.id);
+        details.appendChild(el("summary", "", "Gesprächsverlauf"));
+        for (const line of s.transcript) {
+          const p = el("div", "line-t");
+          p.append(el("b", "", line.role === "visitor" ? "Besucher: " : "Nia: "), line.text);
+          details.appendChild(p);
+        }
+        card.appendChild(details);
+        sessions.appendChild(card);
+      }
+    }
+    document.getElementById("reset").onclick = async () => {
+      if (confirm("Alle Demo-Anmeldungen, Anfragen und Gespräche löschen?")) { await fetch("/api/reset", { method: "POST" }); refresh(); }
+    };
+    refresh();
+    setInterval(refresh, 3000);
+  </script>
+</body>
+</html>

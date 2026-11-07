@@ -34,6 +34,9 @@
 | Voice: microphone blocked on a phone | Browsers need `https://` or `localhost`; use the laptop or an HTTPS tunnel/deployment. |
 | Voice: an answer is stopped unexpectedly | The app's safety check found a drug, dose or phrase not in the letter (reason on `/team`, *Sicherheitsprüfung*). Expected if **Fehler einschleusen** was armed; otherwise review the word lists in `safety.py`. |
 | Voice: `setup_guardrail.py` fails with 403 | Needs Foundry Account Owner or Contributor on the Foundry resource and `FOUNDRY_ACCOUNT_RESOURCE_ID`. The demo runs without the guardrail; the app's checks still apply. |
+| Avatar: "Nia ist gleich wieder für Sie da" / *rate-limited* | Avatar sessions started back to back are briefly limited. Wait 30–60 seconds; after rehearsing, leave a minute before the live start. |
+| Avatar: no video, voice works | The kiosk falls back to voice after 15 seconds. Check that the network allows WebRTC to the TURN relay (3478/443) and that the region supports real-time avatars. |
+| Avatar: screen still shows the last check-in | Tap the logo (home); the kiosk also resets 45 seconds after a conversation ends. |
 
 ## Reset and recovery
 

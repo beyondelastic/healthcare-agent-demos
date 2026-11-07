@@ -9,17 +9,20 @@ konkrete Aufgaben zeigen. Technik nur zur Einordnung oeffnen.
 | Zeit | Inhalt |
 |---|---|
 | 0-10 Min. | Ziele, heutige Medienbrueche, Erwartungen der Teilnehmenden |
-| 10-20 Min. | Agentenprinzip: Quellen, Werkzeuge, Identitaet, menschliche Verantwortung |
-| 20-35 Min. | [Klinik Cockpit: KI-Agenten erstellen und pruefen den Entlassbrief](KLINIK-SCRIPT-DE.md) |
-| 35-45 Min. | [Entlass-Assistent: Fragen zum Brief per Sprache](VOICE-SCRIPT-DE.md) |
-| 45-60 Min. | [Forschungsnavigator in Teams](RESEARCH-SCRIPT-DE.md) |
-| 60-70 Min. | Architektur, Zugriffsrechte, Betrieb und Grenzen |
-| 70-90 Min. | Diskussion: eigener Pilot, fachliche Verantwortung, Erfolgskriterien |
+| 10-18 Min. | Agentenprinzip: Quellen, Werkzeuge, Identitaet, menschliche Verantwortung |
+| 18-32 Min. | [Klinik Cockpit: KI-Agenten erstellen und pruefen den Entlassbrief](KLINIK-SCRIPT-DE.md) |
+| 32-42 Min. | [Entlass-Assistent: Fragen zum Brief per Sprache](VOICE-SCRIPT-DE.md) |
+| 42-50 Min. | [Empfangs-Avatar: Ankunft zum Nachsorgetermin](AVATAR-SCRIPT-DE.md) |
+| 50-62 Min. | [Forschungsnavigator in Teams](RESEARCH-SCRIPT-DE.md) |
+| 62-72 Min. | Architektur, Leitplanken, Zugriffsrechte, Betrieb und Grenzen |
+| 72-90 Min. | Diskussion: eigener Pilot, fachliche Verantwortung, Erfolgskriterien |
 
 Der Entlass-Assistent setzt die Geschichte des Cockpits aus Sicht der Patientin
 fort: Der im Cockpit freigegebene Arztbrief traegt einen QR-Code, ueber den die
 Patientin ihn in der eigenen Sprache erklaert bekommt (gleiche Patientin, gleiche
-Fakten). Beide Demos laufen technisch unabhaengig.
+Fakten). Der Empfangs-Avatar schliesst die Reise ab: Am 24.11.2026 meldet sich
+dieselbe Patientin am Haupteingang zu ihrem Nachsorgetermin an. Alle Demos laufen
+technisch unabhaengig.
 
 ## Vorbereitung am Vortag
 
@@ -45,6 +48,8 @@ Fakten). Beide Demos laufen technisch unabhaengig.
    verwenden oder die Basiskriterien ausdruecklich vollstaendig setzen.
 3. Entlass-Assistent auf `http://127.0.0.1:8010/` oeffnen, Team-Ansicht
    `http://127.0.0.1:8010/team` zuruecksetzen, Mikrofon/Headset pruefen.
+   Empfangs-Avatar auf `http://127.0.0.1:8030/` oeffnen (Vollbild), `/team` zuruecksetzen;
+   nach der Probe mindestens eine Minute warten (Avatar-Sitzungen sind kurz begrenzt).
 4. Benachrichtigungen ausblenden; technische Konfiguration und Admin-Portale
    aus der Bildschirmfreigabe nehmen.
 5. Zu Beginn sagen: **"Alle Daten und Einrichtungen sind erfunden.

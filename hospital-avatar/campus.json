@@ -1,0 +1,152 @@
+{
+  "_hinweis": "Vollständig fiktiver Campus, fiktive Termine und Personen. Keine reale Einrichtung.",
+  "hospital": "Universitätsklinikum Musterstadt (fiktiv)",
+  "kiosk": {"name": "Haupteingang, Foyer Gebäude A, Ebene 0", "point": [510, 430]},
+  "demo_now": {"date": "24.11.2026", "weekday": "Dienstag", "time": "10:12"},
+  "buildings": [
+    {"id": "A", "name": "Gebäude A · Chirurgie und Ambulanzen", "rect": [380, 250, 260, 200]},
+    {"id": "B", "name": "Gebäude B · Radiologie und Labor", "rect": [700, 250, 230, 200]},
+    {"id": "C", "name": "Gebäude C · Service und Begegnung", "rect": [70, 250, 250, 200]},
+    {"id": "D", "name": "Gebäude D · Zentrale Notaufnahme", "rect": [700, 60, 230, 130]},
+    {"id": "P", "name": "Parkhaus P1", "rect": [110, 520, 200, 70]},
+    {"id": "X", "name": "Apotheke am Klinikum", "rect": [380, 530, 110, 55]}
+  ],
+  "streets": [
+    {"name": "Klinikstraße", "line": [[40, 490], [980, 490]]}
+  ],
+  "locations": [
+    {
+      "id": "chirurgische_ambulanz", "name": "Chirurgische Ambulanz",
+      "aliases": ["chirurgie ambulanz", "allgemeinchirurgie", "nachsorge chirurgie", "viszeralchirurgie ambulanz"],
+      "building": "A", "floor": 2, "room": "Anmeldung A2.10",
+      "route": ["Gehen Sie geradeaus durch das Foyer zu den Aufzügen A, direkt hinter der Information.", "Fahren Sie in Ebene 2.", "Wenden Sie sich nach rechts: Der Anmeldetresen der Chirurgischen Ambulanz ist Raum A2.10, der Wartebereich direkt daneben."],
+      "barrier_free": "Der Weg ist stufenlos; die Aufzüge A sind rollstuhlgerecht.",
+      "minutes": 3, "path": [[510, 430], [510, 330], [565, 330]], "pin": [585, 300]
+    },
+    {
+      "id": "station_chirurgie_3", "name": "Station Chirurgie 3 (Allgemein- und Viszeralchirurgie)",
+      "aliases": ["station c3", "chirurgie 3", "station chirurgie", "patientenzimmer chirurgie"],
+      "building": "A", "floor": 3, "room": "Stationsstützpunkt A3.01",
+      "route": ["Gehen Sie zu den Aufzügen A hinter der Information.", "Fahren Sie in Ebene 3.", "Der Stationsstützpunkt A3.01 liegt gegenüber den Aufzügen; bitte melden Sie sich dort als Besuch an."],
+      "barrier_free": "Stufenlos über die Aufzüge A.",
+      "minutes": 3, "path": [[510, 430], [510, 330], [565, 330]], "pin": [600, 280]
+    },
+    {
+      "id": "patientenaufnahme", "name": "Zentrale Patientenaufnahme",
+      "aliases": ["aufnahme", "anmeldung stationär", "stationäre aufnahme", "check-in station"],
+      "building": "A", "floor": 0, "room": "A0.05",
+      "route": ["Die Patientenaufnahme ist hier im Foyer links, Raum A0.05. Ziehen Sie dort eine Wartenummer."],
+      "barrier_free": "Stufenlos, mit abgesenktem Schalter.",
+      "minutes": 1, "path": [[510, 430], [450, 430], [430, 405]], "pin": [425, 395]
+    },
+    {
+      "id": "radiologie", "name": "Radiologie (Röntgen, CT, MRT)",
+      "aliases": ["röntgen", "mrt", "ct", "kernspin", "bildgebung", "ultraschall radiologie"],
+      "building": "B", "floor": 0, "room": "Anmeldung B0.20",
+      "route": ["Gehen Sie geradeaus bis zur großen Querverbindung, der Magistrale.", "Biegen Sie rechts ab und folgen Sie der Magistrale bis in Gebäude B.", "Die Anmeldung der Radiologie, Raum B0.20, liegt auf der linken Seite."],
+      "barrier_free": "Stufenlos auf Ebene 0.",
+      "minutes": 5, "path": [[510, 430], [510, 360], [700, 360], [770, 360], [770, 315]], "pin": [770, 300]
+    },
+    {
+      "id": "labor", "name": "Blutentnahme und Labor-Ambulanz",
+      "aliases": ["blutabnahme", "blutentnahme", "labor", "blut abnehmen"],
+      "building": "B", "floor": 1, "room": "B1.12",
+      "route": ["Folgen Sie der Magistrale nach rechts bis in Gebäude B.", "Nehmen Sie den Aufzug B oder die Treppe nach Ebene 1.", "Die Blutentnahme ist Raum B1.12; ziehen Sie dort eine Wartenummer."],
+      "barrier_free": "Nutzen Sie den Aufzug B am Ende der Magistrale.",
+      "minutes": 6, "path": [[510, 430], [510, 360], [700, 360], [840, 360]], "pin": [855, 335]
+    },
+    {
+      "id": "notaufnahme", "name": "Zentrale Notaufnahme",
+      "aliases": ["notaufnahme", "notfall", "erste hilfe", "emergency"],
+      "building": "D", "floor": 0, "room": "eigener Eingang, rotes Schild",
+      "route": ["Die Notaufnahme hat einen eigenen Eingang in Gebäude D.", "Verlassen Sie das Foyer durch den Haupteingang und gehen Sie auf der Klinikstraße nach rechts.", "Nach etwa 200 Metern links folgen Sie dem roten Schild ‚Notaufnahme‘."],
+      "barrier_free": "Stufenloser Weg, ebener Gehweg.",
+      "minutes": 4, "path": [[510, 430], [510, 490], [960, 490], [960, 125], [930, 125]], "pin": [915, 110]
+    },
+    {
+      "id": "cafeteria", "name": "Cafeteria ‚Mittelpunkt‘",
+      "aliases": ["cafeteria", "café", "kaffee", "essen", "restaurant", "kantine"],
+      "building": "C", "floor": 0, "room": "C0.01",
+      "route": ["Gehen Sie geradeaus bis zur Magistrale.", "Biegen Sie links ab; nach etwa 80 Metern liegt die Cafeteria in Gebäude C."],
+      "barrier_free": "Stufenlos auf Ebene 0.",
+      "minutes": 3, "path": [[510, 430], [510, 360], [320, 360], [210, 360], [210, 330]], "pin": [200, 305]
+    },
+    {
+      "id": "raum_der_stille", "name": "Raum der Stille und Klinikseelsorge",
+      "aliases": ["kapelle", "raum der stille", "gebetsraum", "seelsorge", "andachtsraum"],
+      "building": "C", "floor": 1, "room": "C1.03",
+      "route": ["Folgen Sie der Magistrale nach links bis in Gebäude C.", "Fahren Sie mit dem Aufzug C in Ebene 1; der Raum der Stille ist Raum C1.03."],
+      "barrier_free": "Aufzug C neben der Cafeteria.",
+      "minutes": 4, "path": [[510, 430], [510, 360], [320, 360], [130, 360]], "pin": [120, 330]
+    },
+    {
+      "id": "toiletten", "name": "Toiletten (auch barrierefrei)",
+      "aliases": ["toilette", "wc", "klo", "toiletten", "restroom"],
+      "building": "A", "floor": 0, "room": "hinter den Aufzügen A",
+      "route": ["Die Toiletten sind hier im Foyer, rechts hinter den Aufzügen A."],
+      "barrier_free": "Eine barrierefreie Toilette mit Notruf ist dort vorhanden.",
+      "minutes": 1, "path": [[510, 430], [510, 385], [605, 385]], "pin": [620, 375]
+    },
+    {
+      "id": "kiosk_blumen", "name": "Kiosk und Blumenladen",
+      "aliases": ["kiosk", "blumen", "zeitung", "geschenke", "shop"],
+      "building": "A", "floor": 0, "room": "Foyer rechts",
+      "route": ["Der Kiosk mit Blumenladen ist hier im Foyer auf der rechten Seite."],
+      "barrier_free": "Stufenlos.",
+      "minutes": 1, "path": [[510, 430], [585, 435]], "pin": [600, 425]
+    },
+    {
+      "id": "parkhaus", "name": "Parkhaus P1 und Kassenautomat",
+      "aliases": ["parkhaus", "parken", "auto", "parkticket", "kassenautomat"],
+      "building": "P", "floor": 0, "room": "gegenüber dem Haupteingang",
+      "route": ["Das Parkhaus P1 liegt gegenüber dem Haupteingang auf der anderen Seite der Klinikstraße.", "Der Kassenautomat steht hier im Foyer neben dem Ausgang."],
+      "barrier_free": "Behindertenparkplätze direkt vor dem Haupteingang.",
+      "minutes": 2, "path": [[510, 430], [510, 490], [330, 490], [260, 520]], "pin": [250, 535]
+    },
+    {
+      "id": "bushaltestelle", "name": "Haltestelle ‚Universitätsklinikum‘ (Bus und Straßenbahn)",
+      "aliases": ["bus", "straßenbahn", "tram", "haltestelle", "öffentliche verkehrsmittel", "taxi"],
+      "building": "-", "floor": 0, "room": "vor dem Haupteingang",
+      "route": ["Die Haltestelle ‚Universitätsklinikum‘ liegt direkt vor dem Haupteingang, etwas rechts.", "Der Taxistand ist daneben."],
+      "barrier_free": "Niederflur-Haltestelle mit Leitsystem.",
+      "minutes": 1, "path": [[510, 430], [510, 490], [650, 500]], "pin": [665, 505]
+    },
+    {
+      "id": "apotheke", "name": "Apotheke am Klinikum (öffentliche Apotheke)",
+      "aliases": ["apotheke", "rezept einlösen", "medikamente kaufen", "pharmacy"],
+      "building": "X", "floor": 0, "room": "gegenüber dem Haupteingang",
+      "route": ["Die öffentliche Apotheke am Klinikum liegt gegenüber dem Haupteingang, links neben dem Parkhaus."],
+      "barrier_free": "Ebenerdiger Eingang.",
+      "minutes": 2, "path": [[510, 430], [510, 490], [440, 525]], "pin": [435, 540]
+    }
+  ],
+  "appointments": [
+    {"last_name": "Novak", "salutation": "Frau", "first_name": "Elena", "date_of_birth": "14.03.1959", "time": "10:30",
+     "location": "chirurgische_ambulanz", "kind": "Nachsorgetermin",
+     "bring": ["Versichertenkarte", "Entlassbrief", "Medikationsplan"],
+     "internal_note": "Nachsorge nach laparoskopischer Cholezystektomie, Besprechung Histologie (nur für das Team)"},
+    {"last_name": "Schneider", "salutation": "Herr", "first_name": "Thomas", "date_of_birth": "02.07.1971", "time": "11:00",
+     "location": "radiologie", "kind": "Untersuchungstermin",
+     "bring": ["Versichertenkarte", "Überweisung", "Vorbefunde auf CD, falls vorhanden"],
+     "internal_note": "MRT Knie rechts (nur für das Team)"},
+    {"last_name": "Yılmaz", "salutation": "Frau", "first_name": "Ayşe", "date_of_birth": "21.09.1985", "time": "10:45",
+     "location": "labor", "kind": "Blutentnahme",
+     "bring": ["Versichertenkarte", "Laborschein"],
+     "internal_note": "Kontrolllabor (nur für das Team)"},
+    {"last_name": "Kowalenko", "salutation": "Frau", "first_name": "Olena", "date_of_birth": "30.01.1990", "time": "13:15",
+     "location": "radiologie", "kind": "Untersuchungstermin",
+     "bring": ["Versichertenkarte", "Überweisung"],
+     "internal_note": "Ultraschall Schilddrüse (nur für das Team)"}
+  ],
+  "visitor_info": {
+    "visiting_hours": {"title": "Besuchszeiten", "text": "Allgemeinstationen täglich 14 bis 19 Uhr. Intensivstationen nach Absprache mit dem Stationsteam. Bitte melden Sie sich am Stationsstützpunkt an; höchstens zwei Besucher gleichzeitig pro Patient."},
+    "cafeteria": {"title": "Cafeteria", "text": "Cafeteria ‚Mittelpunkt‘ in Gebäude C: Montag bis Freitag 7:30 bis 18 Uhr, Samstag und Sonntag 11 bis 17 Uhr. Warmes Mittagessen 11:30 bis 14 Uhr, auch vegetarisch."},
+    "parking": {"title": "Parken", "text": "Parkhaus P1 gegenüber dem Haupteingang: 2 Euro pro Stunde, höchstens 12 Euro pro Tag. Bezahlung am Kassenautomaten im Foyer. Behindertenparkplätze direkt vor dem Haupteingang."},
+    "wifi": {"title": "WLAN", "text": "Kostenloses WLAN ‚Klinikum-Gast‘: verbinden und die Nutzungsbedingungen bestätigen, kein Passwort nötig."},
+    "wheelchair": {"title": "Rollstühle und Begleitung", "text": "Leihrollstühle stehen links neben dem Haupteingang (1 Euro Pfand). Für eine Begleitung zum Termin kann die Information eine Mitarbeiterin rufen."},
+    "pharmacy": {"title": "Apotheke", "text": "Die öffentliche Apotheke am Klinikum gegenüber dem Haupteingang ist Montag bis Samstag 8 bis 19 Uhr geöffnet. Rezepte aus der Ambulanz können dort eingelöst werden."},
+    "lost_and_found": {"title": "Fundbüro", "text": "Fundsachen nimmt die Information im Foyer entgegen, Montag bis Freitag 7 bis 20 Uhr."},
+    "interpreter": {"title": "Dolmetscher", "text": "Für Arztgespräche organisiert die Station oder Ambulanz einen Dolmetscherdienst. Bitte sprechen Sie das Team bei der Anmeldung darauf an."},
+    "information_desk": {"title": "Information im Foyer", "text": "Die Information ist Montag bis Freitag 7 bis 20 Uhr, am Wochenende 9 bis 18 Uhr persönlich besetzt."}
+  }
+}

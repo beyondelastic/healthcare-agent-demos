@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Willkommen · Universitätsklinikum Musterstadt</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="kiosk">
+  <header class="bar">
+    <div class="brand">
+      <div class="logo">UKM</div>
+      <div>
+        <div class="brand-name" id="hospital">Universitätsklinikum Musterstadt</div>
+        <div class="welcome">Willkommen · Welcome · Hoş geldiniz · أهلاً وسهلاً · Ласкаво просимо</div>
+      </div>
+    </div>
+    <div class="here"><span class="dot"></span><span id="here-label"></span></div>
+    <div class="clock" id="clock"></div>
+  </header>
+
+  <main class="layout">
+    <section class="avatar-col">
+      <div class="avatar-frame" id="avatar-frame">
+        <video id="avatar-video" playsinline autoplay muted></video>
+        <audio id="avatar-audio" autoplay></audio>
+        <div class="avatar-idle" id="avatar-idle">
+          <div class="idle-ring"><span>Nia</span></div>
+          <p id="idle-text"></p>
+        </div>
+        <div class="avatar-status" id="status" role="status"></div>
+      </div>
+      <div class="subtitle" id="subtitle" aria-live="polite"></div>
+      <div class="controls">
+        <button class="mic" id="mic" aria-label="Start">🎙️</button>
+        <div class="mic-label" id="mic-label"></div>
+      </div>
+      <nav class="languages" id="languages" aria-label="Sprache"></nav>
+    </section>
+
+    <section class="stage" id="stage"></section>
+  </main>
+
+  <footer class="foot">
+    <span id="demo-note"></span>
+    <form class="ask" id="ask"><input id="question" autocomplete="off"><button type="submit" id="send"></button></form>
+  </footer>
+
+  <script src="/static/kiosk.js"></script>
+</body>
+</html>

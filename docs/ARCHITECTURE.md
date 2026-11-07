@@ -119,6 +119,32 @@ alone):
 A patient-facing assistant with medical content requires a regulatory assessment
 under the EU Medical Device Regulation (MDR, 2017/745) and clinical validation.
 
+## Hospital welcome avatar (Empfangs-Avatar)
+
+```mermaid
+flowchart LR
+    K[Kiosk browser: mic, map, avatar video] <-- WebSocket: audio, text, signalling --> R[FastAPI relay on loopback]
+    K <-. WebRTC: avatar video and voice .-> V
+    R <-- realtime session, Entra ID --> V[Foundry voice agent with standard video avatar]
+    R --> T[Function tools: campus routes, check-in, visitor info, staff call]
+    T --> S[Information desk and clinic view]
+```
+
+A Foundry voice agent with an avatar configuration (standard video avatar `nia`)
+runs the conversation. The avatar's video and the synchronised voice go straight to
+the kiosk browser over WebRTC; the relay only forwards the signalling (ICE servers,
+SDP offer and answer) and keeps the credential. Function tools return routes and map
+coordinates, check patients in with last name and date of birth, provide visitor
+information, and call staff. Each tool call carries the visitor's language so the
+screen follows the conversation.
+
+The use case is organisational, not clinical: the check-in tool never returns the
+appointment reason (staff see it in their view), medical questions and symptoms lead
+to a staff call, and a rule-based alarm reacts to acute danger terms in five
+languages. Campus, appointments and staff notification are simulated. A real kiosk
+needs the appointment system, staff paging, accessibility review and a data
+protection assessment for speech processing in a public area.
+
 ## Before any real hospital use
 
 Separately design and approve clinical ownership and intended purpose,
