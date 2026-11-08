@@ -16,7 +16,8 @@ fictional.
 [Klinik presenter script](docs/KLINIK-SCRIPT-DE.md) ·
 [Research presenter script](docs/RESEARCH-SCRIPT-DE.md) ·
 [Voice presenter script](docs/VOICE-SCRIPT-DE.md) ·
-[Avatar presenter script](docs/AVATAR-SCRIPT-DE.md)
+[Avatar presenter script](docs/AVATAR-SCRIPT-DE.md) ·
+[End-to-end rehearsal](docs/PROBELAUF-DE.md)
 
 **Slides:** [German use-case and architecture deck](docs/slides/Healthcare-Agent-Demos-DE.pptx)
 — nine editable slides, with speaker notes, covering all four demonstrations and the voice agent's guardrails.
@@ -58,6 +59,19 @@ runs on port 8010.
 For the avatar, follow [avatar setup](docs/AVATAR-SETUP.md) and the [avatar technical reference](hospital-avatar/README.md); it
 runs on port 8030.
 There is no one-command Azure provisioning or preconfigured shared tenant.
+
+## Prepare and test before a presentation
+
+Once every demo is set up, two scripts in the repository root cover the day before and the hour before:
+
+```powershell
+.\Test-Demos.ps1                                  # day before: unit + live tests, order 01 -> 03 -> 04 -> 02 (~20 min, usage)
+.\Prepare-Demos.ps1 -ResumeFabric -CheckResearch  # hour before: checks, start servers, reset, open tabs
+.\Prepare-Demos.ps1 -Stop -PauseFabric            # afterwards: stop servers, pause the Fabric capacity
+```
+
+The manual end-to-end rehearsal with expected results is [docs/PROBELAUF-DE.md](docs/PROBELAUF-DE.md).
+`FABRIC_CAPACITY_RESOURCE_ID` in the root `.env` is optional; without it the capacity isn't checked.
 
 ## Repository map
 
