@@ -128,6 +128,7 @@ def check_in_appointment(last_name, date_of_birth, language=None, session_id=Non
     _action(session_id, "checkin", f"{match['kind']} {match['time']} · {checkin['waiting_number']}")
     return {
         "ok": True, "address_as": f"{match['salutation']} {match['last_name']}", "appointment_time": match["time"],
+        "appointment_time_spoken_de": f"{match['time']} Uhr",
         "appointment_kind": match["kind"], "waiting_number": checkin["waiting_number"],
         "arrival": timing, "minutes_until_appointment": delta, "bring": match["bring"],
         "route": route_for(match["location"]),

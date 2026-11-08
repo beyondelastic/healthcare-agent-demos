@@ -78,9 +78,9 @@ body.kiosk { height: 100vh; display: grid; grid-template-rows: auto 1fr auto; ov
 .steps .step-free-note { list-style: "♿  "; color: var(--ok); }
 
 .map .street { stroke: #cfd8da; stroke-width: 26; stroke-linecap: round; }
-.map .street-label { fill: #8a9ea3; font-size: 15px; font-weight: 600; }
+.map .street-label { fill: #4f6267; font-size: 14px; font-weight: 600; }
 .map .corridor { stroke: #e7eeef; stroke-width: 14; stroke-linecap: round; }
-.map .corridor-label { fill: #9fb2b6; font-size: 13px; }
+.map .corridor-label { fill: #8a9ea3; font-size: 11px; }
 .map .building { fill: #eef4f5; stroke: #c9d9dc; stroke-width: 2; }
 .map .building.emergency { fill: #fdecea; stroke: #f0b8b2; }
 .map .building.active { fill: #fff2e3; stroke: var(--route); stroke-width: 3; }

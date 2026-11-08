@@ -382,10 +382,9 @@ function campusMap(locationId) {
   const target = campus.locations.find((l) => l.id === locationId);
   for (const s of campus.streets) {
     add("line", { x1: s.line[0][0], y1: s.line[0][1], x2: s.line[1][0], y2: s.line[1][1], class: "street" });
-    add("text", { x: 60, y: 512, class: "street-label" }, s.name);
+    add("text", { x: 60, y: s.line[0][1], class: "street-label", "dominant-baseline": "central" }, s.name);
   }
   add("line", { x1: 130, y1: 360, x2: 930, y2: 360, class: "corridor" });
-  add("text", { x: 655, y: 352, class: "corridor-label" }, "Magistrale");
   for (const b of campus.buildings) {
     const [x, y, w, h] = b.rect;
     const active = target && target.building === b.id;
@@ -393,6 +392,7 @@ function campusMap(locationId) {
     add("text", { x: x + 14, y: y + 26, class: "building-id" }, b.id.length === 1 && "ABCD".includes(b.id) ? b.id : "");
     add("text", { x: x + (("ABCD".includes(b.id)) ? 40 : 12), y: y + 26, class: "building-name" }, b.name.replace(/^Gebäude [A-D] · /, ""));
   }
+  add("text", { x: 670, y: 350, class: "corridor-label", "text-anchor": "middle" }, "Magistrale");
   if (target) {
     const points = target.path.map((p) => p.join(",")).join(" ");
     add("polyline", { points, class: "path-shadow" });
