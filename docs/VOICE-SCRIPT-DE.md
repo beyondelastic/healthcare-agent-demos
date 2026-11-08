@@ -61,6 +61,7 @@ das entlastet Hotline und Station, ohne neue medizinische Aussagen zu erzeugen.�
 
 | Problem | Lösung |
 |---|---|
+| Mikrofon kurz stummschalten (z. B. während Sie erklären) | Knopf **🔇 Mikrofon aus** neben dem Mikrofon oder Taste **M**; Gespräch bleibt offen, Tippen geht weiter |
 | Assistent unterbricht sich selbst | Headset nutzen oder Lautsprecher leiser stellen |
 | Keine Antwort / Fehler | Gespräch beenden und neu starten; Anmeldung (`az login`) prüfen |
 | „Verbindung wird wiederhergestellt …“ | Bricht die Verbindung zum Sprachdienst ab, verbindet die App automatisch neu (bis zu 3-mal) und setzt das Gespräch fort; einfach weitersprechen |

@@ -33,6 +33,7 @@ Prüft Ordner, Azure-Anmeldung und Foundry-Agenten, startet bei Bedarf die Fabri
 die Tabs in Vortragsreihenfolge. Danach:
 
 - [ ] Headset bzw. Mikrofon im Browser ausgewählt, Systembenachrichtigungen aus
+- [ ] Tipp: In Demo 03 und 04 schaltet **🔇 Mikrofon aus** (oder Taste **M**) das Mikrofon kurz stumm, während Sie erklären
 - [ ] Teams im richtigen Tenant/Profil, **Forschungsnavigator** geöffnet, neues Gespräch
 - [ ] Nach diesem Probelauf **`.\Prepare-Demos.ps1` erneut ausführen** (setzt alles zurück) und
       mindestens eine Minute warten, bevor der Avatar live startet

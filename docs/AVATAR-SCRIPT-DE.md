@@ -52,5 +52,6 @@ nicht medizinisch.“*
 |---|---|
 | „Nia ist gleich wieder für Sie da …“ / *rate-limited* | Avatar-Sitzungen zu schnell hintereinander gestartet: 30–60 Sekunden warten, dann erneut starten |
 | Avatar erscheint nicht, Sprache läuft weiter | Nach 15 Sekunden schaltet der Kiosk auf reine Sprache um; Netzwerk/Firewall (WebRTC, TURN) prüfen |
+| Mikrofon kurz stummschalten (z. B. während Sie erklären) | Knopf **🔇 Mikrofon aus** neben dem Mikrofon oder Taste **M**; Gespräch bleibt offen, Tippen geht weiter |
 | Assistentin unterbricht sich selbst | Headset nutzen oder Lautsprecher leiser stellen |
 | Bildschirm zeigt noch die letzte Anmeldung | Auf das Logo oben links tippen (Startseite) – nach Gesprächsende automatisch nach 45 Sekunden |

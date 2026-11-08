@@ -5,7 +5,7 @@ const SAMPLE_RATE = 24000;
 const $ = (id) => document.getElementById(id);
 
 const UI = {
-  de: { medTitle: "Ihr Medikationsplan – unverändert aus dem freigegebenen Brief", medCols: ["Medikament", "Stärke", "Einnahme", "Hinweis"], guard: "Antwort gestoppt", guardText: "Sie wich vom freigegebenen Brief ab. Es gilt der Medikationsplan oben. Das Team wurde informiert.", guardFinal: "Bitte halten Sie sich an Ihren Brief. Das Behandlungsteam ruft Sie zurück.", reconnecting: "Verbindung wird wiederhergestellt …", title: "Fragen zu Ihrem Entlassbrief", discharge: "Entlassung am", approved: "Ärztlich freigegeben",
+  de: { mute: "🔇 Mikrofon aus", unmute: "🎙️ Mikrofon an", muted: "Mikrofon stumm – Tippen geht weiter.", medTitle: "Ihr Medikationsplan – unverändert aus dem freigegebenen Brief", medCols: ["Medikament", "Stärke", "Einnahme", "Hinweis"], guard: "Antwort gestoppt", guardText: "Sie wich vom freigegebenen Brief ab. Es gilt der Medikationsplan oben. Das Team wurde informiert.", guardFinal: "Bitte halten Sie sich an Ihren Brief. Das Behandlungsteam ruft Sie zurück.", reconnecting: "Verbindung wird wiederhergestellt …", title: "Fragen zu Ihrem Entlassbrief", discharge: "Entlassung am", approved: "Ärztlich freigegeben",
         demo: "Demo: Zugang per QR-Code, Identitätsprüfung simuliert. Alle Daten sind fiktiv.",
         start: "Gespräch starten", stop: "Gespräch beenden", connecting: "Verbinde …", listening: "Ich höre zu. Sprechen Sie einfach.",
         ended: "Gespräch beendet.", ask: "Oder Frage eintippen …", send: "Senden",
@@ -13,7 +13,7 @@ const UI = {
         sos: "Notfall: 112", disclaimer: "Kein Ersatz für ärztliche Beratung.", letter: "Brief anzeigen",
         source: "Aus Ihrem Entlassbrief", callback: "Anfrage an das Behandlungsteam gesendet", callbackText: "Das Team meldet sich bei Ihnen. Dies ist kein Notdienst.",
         emergency: "Bitte rufen Sie jetzt den Notruf 112.", emergencyText: "Das Behandlungsteam wurde zusätzlich informiert.", micError: "Kein Mikrofon verfügbar. Sie können Ihre Frage eintippen." },
-  en: { medTitle: "Your medication plan – unchanged from the approved letter", medCols: ["Medicine", "Strength", "How to take", "Note"], guard: "Answer stopped", guardText: "It did not match your approved letter. The medication plan above applies. Your care team has been informed.", guardFinal: "Please follow your letter. Your care team will call you back.", reconnecting: "Reconnecting …", title: "Questions about your discharge letter", discharge: "Discharged on", approved: "Approved by your doctor",
+  en: { mute: "🔇 Mute microphone", unmute: "🎙️ Unmute microphone", muted: "Microphone muted – you can still type.", medTitle: "Your medication plan – unchanged from the approved letter", medCols: ["Medicine", "Strength", "How to take", "Note"], guard: "Answer stopped", guardText: "It did not match your approved letter. The medication plan above applies. Your care team has been informed.", guardFinal: "Please follow your letter. Your care team will call you back.", reconnecting: "Reconnecting …", title: "Questions about your discharge letter", discharge: "Discharged on", approved: "Approved by your doctor",
         demo: "Demo: access via QR code, identity check simulated. All data is fictional.",
         start: "Start conversation", stop: "End conversation", connecting: "Connecting …", listening: "I'm listening. Just speak.",
         ended: "Conversation ended.", ask: "Or type your question …", send: "Send",
@@ -21,7 +21,7 @@ const UI = {
         sos: "Emergency: 112", disclaimer: "Not a substitute for medical advice.", letter: "Show letter",
         source: "From your discharge letter", callback: "Request sent to your care team", callbackText: "The team will contact you. This is not an emergency service.",
         emergency: "Please call the emergency number 112 now.", emergencyText: "Your care team has also been informed.", micError: "No microphone available. You can type your question." },
-  tr: { medTitle: "İlaç planınız – onaylı mektuptan değiştirilmeden", medCols: ["İlaç", "Doz", "Kullanım", "Not"], guard: "Yanıt durduruldu", guardText: "Onaylı mektubunuzla uyuşmadı. Yukarıdaki ilaç planı geçerlidir. Tedavi ekibi bilgilendirildi.", guardFinal: "Lütfen mektubunuza uyun. Tedavi ekibi sizi arayacak.", reconnecting: "Bağlantı yeniden kuruluyor …", title: "Taburcu mektubunuzla ilgili sorular", discharge: "Taburcu tarihi", approved: "Doktorunuz tarafından onaylandı",
+  tr: { mute: "🔇 Mikrofonu kapat", unmute: "🎙️ Mikrofonu aç", muted: "Mikrofon kapalı – yazmaya devam edebilirsiniz.", medTitle: "İlaç planınız – onaylı mektuptan değiştirilmeden", medCols: ["İlaç", "Doz", "Kullanım", "Not"], guard: "Yanıt durduruldu", guardText: "Onaylı mektubunuzla uyuşmadı. Yukarıdaki ilaç planı geçerlidir. Tedavi ekibi bilgilendirildi.", guardFinal: "Lütfen mektubunuza uyun. Tedavi ekibi sizi arayacak.", reconnecting: "Bağlantı yeniden kuruluyor …", title: "Taburcu mektubunuzla ilgili sorular", discharge: "Taburcu tarihi", approved: "Doktorunuz tarafından onaylandı",
         demo: "Demo: QR kod ile erişim, kimlik doğrulama simüle edildi. Tüm veriler kurgusaldır.",
         start: "Konuşmayı başlat", stop: "Konuşmayı bitir", connecting: "Bağlanıyor …", listening: "Dinliyorum. Konuşabilirsiniz.",
         ended: "Konuşma sona erdi.", ask: "Veya sorunuzu yazın …", send: "Gönder",
@@ -29,7 +29,7 @@ const UI = {
         sos: "Acil: 112", disclaimer: "Tıbbi danışmanlığın yerini tutmaz.", letter: "Mektubu göster",
         source: "Taburcu mektubunuzdan", callback: "Tedavi ekibine talep gönderildi", callbackText: "Ekip sizinle iletişime geçecek. Bu bir acil servis değildir.",
         emergency: "Lütfen şimdi 112'yi arayın.", emergencyText: "Tedavi ekibi ayrıca bilgilendirildi.", micError: "Mikrofon yok. Sorunuzu yazabilirsiniz." },
-  ar: { medTitle: "خطة أدويتك – كما وردت في الرسالة المعتمدة دون تغيير", medCols: ["الدواء", "الجرعة", "طريقة التناول", "ملاحظة"], guard: "تم إيقاف الإجابة", guardText: "لم تتطابق مع رسالتك المعتمدة. خطة الأدوية أعلاه هي المعتمدة. تم إبلاغ فريق العلاج.", guardFinal: "يرجى الالتزام برسالتك. سيتصل بك فريق العلاج.", reconnecting: "جارٍ إعادة الاتصال …", title: "أسئلة حول رسالة الخروج", discharge: "تاريخ الخروج", approved: "معتمدة من الطبيب",
+  ar: { mute: "🔇 كتم الميكروفون", unmute: "🎙️ تشغيل الميكروفون", muted: "الميكروفون مكتوم – يمكنك الكتابة.", medTitle: "خطة أدويتك – كما وردت في الرسالة المعتمدة دون تغيير", medCols: ["الدواء", "الجرعة", "طريقة التناول", "ملاحظة"], guard: "تم إيقاف الإجابة", guardText: "لم تتطابق مع رسالتك المعتمدة. خطة الأدوية أعلاه هي المعتمدة. تم إبلاغ فريق العلاج.", guardFinal: "يرجى الالتزام برسالتك. سيتصل بك فريق العلاج.", reconnecting: "جارٍ إعادة الاتصال …", title: "أسئلة حول رسالة الخروج", discharge: "تاريخ الخروج", approved: "معتمدة من الطبيب",
         demo: "عرض توضيحي: الدخول عبر رمز QR، والتحقق من الهوية محاكى. جميع البيانات خيالية.",
         start: "ابدأ المحادثة", stop: "إنهاء المحادثة", connecting: "جارٍ الاتصال …", listening: "أنا أستمع. تحدث فقط.",
         ended: "انتهت المحادثة.", ask: "أو اكتب سؤالك …", send: "إرسال",
@@ -37,7 +37,7 @@ const UI = {
         sos: "طوارئ: 112", disclaimer: "لا يغني عن الاستشارة الطبية.", letter: "عرض الرسالة",
         source: "من رسالة الخروج", callback: "تم إرسال طلب إلى فريق العلاج", callbackText: "سيتواصل معك الفريق. هذه ليست خدمة طوارئ.",
         emergency: "يرجى الاتصال برقم الطوارئ 112 الآن.", emergencyText: "تم إبلاغ فريق العلاج أيضاً.", micError: "لا يوجد ميكروفون. يمكنك كتابة سؤالك." },
-  uk: { medTitle: "Ваш план ліків – без змін із затвердженого листа", medCols: ["Ліки", "Доза", "Прийом", "Примітка"], guard: "Відповідь зупинено", guardText: "Вона не відповідала затвердженому листу. Діє план ліків вище. Команду лікування повідомлено.", guardFinal: "Будь ласка, дотримуйтеся листа. Команда лікування вам зателефонує.", reconnecting: "Відновлення з'єднання …", title: "Запитання щодо виписки", discharge: "Дата виписки", approved: "Затверджено лікарем",
+  uk: { mute: "🔇 Вимкнути мікрофон", unmute: "🎙️ Увімкнути мікрофон", muted: "Мікрофон вимкнено – можна друкувати.", medTitle: "Ваш план ліків – без змін із затвердженого листа", medCols: ["Ліки", "Доза", "Прийом", "Примітка"], guard: "Відповідь зупинено", guardText: "Вона не відповідала затвердженому листу. Діє план ліків вище. Команду лікування повідомлено.", guardFinal: "Будь ласка, дотримуйтеся листа. Команда лікування вам зателефонує.", reconnecting: "Відновлення з'єднання …", title: "Запитання щодо виписки", discharge: "Дата виписки", approved: "Затверджено лікарем",
         demo: "Демо: доступ через QR-код, перевірка особи змодельована. Усі дані вигадані.",
         start: "Почати розмову", stop: "Завершити розмову", connecting: "З'єднання …", listening: "Я слухаю. Просто говоріть.",
         ended: "Розмову завершено.", ask: "Або введіть запитання …", send: "Надіслати",
@@ -146,12 +146,14 @@ async function startSession(useMic) {
 function startCapture() {
   if (!withMic || !micSource) return;
   const capture = new AudioWorkletNode(ctx, "mic-capture", { numberOfInputs: 1, numberOfOutputs: 0, channelCount: 1, channelCountMode: "explicit" });
-  capture.port.onmessage = (e) => ws?.readyState === WebSocket.OPEN && ws.send(e.data);
+  capture.port.onmessage = (e) => ws?.readyState === WebSocket.OPEN && !micMuted && ws.send(e.data);
+  showMute(true);
   micSource.connect(capture);
 }
 
 function stopSession() {
   if (!ws) return;
+  showMute(false);
   const socket = ws;
   ws = null;
   socket.close();
@@ -170,7 +172,7 @@ function onEvent(msg) {
     case "config": startCapture(); break;
     case "status":
       if (msg.text === "connected" || msg.text === "reconnected") {
-        setStatus(withMic ? t("listening") : "");
+        setStatus(withMic ? (micMuted ? t("muted") : t("listening")) : "");
         if (queuedText) { ws.send(JSON.stringify({ type: "text", text: queuedText })); queuedText = null; }
       }
       if (msg.text === "reconnecting") { stopPlayback(); setStatus(t("reconnecting")); }
@@ -325,3 +327,24 @@ $("show-letter").onclick = () => {
   $("letter").showModal();
 };
 $("close-letter").onclick = () => $("letter").close();
+
+// ---------- Mute (presenter: button or key "M") ----------
+let micMuted = false;
+function setMuted(value) {
+  micMuted = value;
+  mic?.getAudioTracks().forEach((track) => { track.enabled = !value; });
+  const button = $("mute");
+  button.textContent = value ? t("unmute") : t("mute");
+  button.classList.toggle("on", value);
+  setStatus(value ? t("muted") : t("listening"));
+}
+function showMute(visible) {
+  const button = $("mute");
+  button.hidden = !visible;
+  if (!visible) { micMuted = false; button.classList.remove("on"); }
+  button.textContent = micMuted ? t("unmute") : t("mute");
+}
+$("mute").onclick = () => setMuted(!micMuted);
+document.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() === "m" && !e.target.closest("input, textarea") && !$("mute").hidden) setMuted(!micMuted);
+});

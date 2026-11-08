@@ -4,7 +4,7 @@ const $ = (id) => document.getElementById(id);
 const SVG = "http://www.w3.org/2000/svg";
 
 const UI = {
-  de: { busy: "Nia ist gleich wieder für Sie da – bitte in einer halben Minute erneut starten.", here: "Sie sind hier: Haupteingang", idle: "Tippen Sie auf das Mikrofon und sprechen Sie mich an – in Ihrer Sprache.", start: "Gespräch starten", stop: "Gespräch beenden",
+  de: { mute: "🔇 Mikrofon aus", unmute: "🎙️ Mikrofon an", muted: "Mikrofon stumm – Tippen geht weiter.", busy: "Nia ist gleich wieder für Sie da – bitte in einer halben Minute erneut starten.", here: "Sie sind hier: Haupteingang", idle: "Tippen Sie auf das Mikrofon und sprechen Sie mich an – in Ihrer Sprache.", start: "Gespräch starten", stop: "Gespräch beenden",
         connecting: "Nia wird verbunden …", listening: "Ich höre zu.", ended: "Gespräch beendet.", noAvatar: "Avatar nicht verfügbar – Sprache läuft weiter.",
         demo: "Demo mit fiktiven Daten · Keine medizinische Beratung · Bei Notfällen wenden Sie sich an das Personal", ask: "Oder tippen …", send: "Senden",
         hello: "Wie kann ich Ihnen helfen?", tiles: [["🗓️", "Termin anmelden", "Ich habe heute einen Termin und möchte mich anmelden."], ["🧭", "Weg finden", "Wo ist die Radiologie?"],
@@ -14,7 +14,7 @@ const UI = {
         late: "Kein Problem – das Team weiß Bescheid.", staff: "Eine Kollegin der Information kommt zu Ihnen", staffText: "Bitte warten Sie hier am Kiosk.",
         alarm: "Hilfe ist unterwegs", alarmText: "Bitte bleiben Sie hier. Das Personal ist alarmiert.", notFound: "Kein Termin gefunden", notFoundText: "Bitte prüfen Sie die Angaben – oder ich rufe eine Kollegin.",
         you: "Sie" },
-  en: { busy: "Nia will be back in a moment – please start again in half a minute.", here: "You are here: main entrance", idle: "Tap the microphone and talk to me – in your language.", start: "Start conversation", stop: "End conversation",
+  en: { mute: "🔇 Mute microphone", unmute: "🎙️ Unmute microphone", muted: "Microphone muted – you can still type.", busy: "Nia will be back in a moment – please start again in half a minute.", here: "You are here: main entrance", idle: "Tap the microphone and talk to me – in your language.", start: "Start conversation", stop: "End conversation",
         connecting: "Connecting Nia …", listening: "I'm listening.", ended: "Conversation ended.", noAvatar: "Avatar unavailable – voice continues.",
         demo: "Demo with fictional data · No medical advice · In an emergency, contact staff", ask: "Or type …", send: "Send",
         hello: "How can I help you?", tiles: [["🗓️", "Check in", "I have an appointment today and would like to check in."], ["🧭", "Find my way", "Where is radiology?"],
@@ -24,7 +24,7 @@ const UI = {
         late: "No problem – the team has been informed.", staff: "A colleague from the information desk is coming", staffText: "Please wait here at the kiosk.",
         alarm: "Help is on the way", alarmText: "Please stay here. Staff have been alerted.", notFound: "No appointment found", notFoundText: "Please check your details – or I can call a colleague.",
         you: "You" },
-  tr: { busy: "Nia birazdan tekrar burada – lütfen yarım dakika sonra yeniden başlatın.", here: "Buradasınız: ana giriş", idle: "Mikrofona dokunun ve benimle kendi dilinizde konuşun.", start: "Konuşmayı başlat", stop: "Konuşmayı bitir",
+  tr: { mute: "🔇 Mikrofonu kapat", unmute: "🎙️ Mikrofonu aç", muted: "Mikrofon kapalı – yazmaya devam edebilirsiniz.", busy: "Nia birazdan tekrar burada – lütfen yarım dakika sonra yeniden başlatın.", here: "Buradasınız: ana giriş", idle: "Mikrofona dokunun ve benimle kendi dilinizde konuşun.", start: "Konuşmayı başlat", stop: "Konuşmayı bitir",
         connecting: "Nia bağlanıyor …", listening: "Dinliyorum.", ended: "Konuşma sona erdi.", noAvatar: "Avatar kullanılamıyor – ses devam ediyor.",
         demo: "Kurgusal verilerle demo · Tıbbi danışmanlık değildir · Acil durumda personele başvurun", ask: "Veya yazın …", send: "Gönder",
         hello: "Size nasıl yardımcı olabilirim?", tiles: [["🗓️", "Randevu kaydı", "Bugün randevum var, kayıt olmak istiyorum."], ["🧭", "Yol bul", "Radyoloji nerede?"],
@@ -34,7 +34,7 @@ const UI = {
         late: "Sorun değil – ekip bilgilendirildi.", staff: "Danışmadan bir çalışan geliyor", staffText: "Lütfen burada, kioskta bekleyin.",
         alarm: "Yardım geliyor", alarmText: "Lütfen burada kalın. Personel uyarıldı.", notFound: "Randevu bulunamadı", notFoundText: "Lütfen bilgilerinizi kontrol edin – ya da bir çalışanı çağırabilirim.",
         you: "Siz" },
-  ar: { busy: "ستعود نيا بعد لحظات – يرجى البدء مجددًا بعد نصف دقيقة.", here: "أنت هنا: المدخل الرئيسي", idle: "المس الميكروفون وتحدث معي بلغتك.", start: "ابدأ المحادثة", stop: "إنهاء المحادثة",
+  ar: { mute: "🔇 كتم الميكروفون", unmute: "🎙️ تشغيل الميكروفون", muted: "الميكروفون مكتوم – يمكنك الكتابة.", busy: "ستعود نيا بعد لحظات – يرجى البدء مجددًا بعد نصف دقيقة.", here: "أنت هنا: المدخل الرئيسي", idle: "المس الميكروفون وتحدث معي بلغتك.", start: "ابدأ المحادثة", stop: "إنهاء المحادثة",
         connecting: "جارٍ توصيل نيا …", listening: "أنا أستمع.", ended: "انتهت المحادثة.", noAvatar: "الصورة الرمزية غير متاحة – الصوت مستمر.",
         demo: "عرض توضيحي ببيانات خيالية · ليست استشارة طبية · في حالات الطوارئ توجه إلى الموظفين", ask: "أو اكتب …", send: "إرسال",
         hello: "كيف يمكنني مساعدتك؟", tiles: [["🗓️", "تسجيل الموعد", "لدي موعد اليوم وأريد التسجيل."], ["🧭", "إيجاد الطريق", "أين قسم الأشعة؟"],
@@ -44,7 +44,7 @@ const UI = {
         late: "لا مشكلة – تم إبلاغ الفريق.", staff: "زميلة من الاستعلامات قادمة إليك", staffText: "يرجى الانتظار هنا عند الشاشة.",
         alarm: "المساعدة في الطريق", alarmText: "يرجى البقاء هنا. تم تنبيه الموظفين.", notFound: "لم يتم العثور على موعد", notFoundText: "يرجى التحقق من بياناتك – أو يمكنني استدعاء زميلة.",
         you: "أنت" },
-  uk: { busy: "Нія зараз повернеться – будь ласка, почніть знову за пів хвилини.", here: "Ви тут: головний вхід", idle: "Торкніться мікрофона й говоріть зі мною своєю мовою.", start: "Почати розмову", stop: "Завершити розмову",
+  uk: { mute: "🔇 Вимкнути мікрофон", unmute: "🎙️ Увімкнути мікрофон", muted: "Мікрофон вимкнено – можна друкувати.", busy: "Нія зараз повернеться – будь ласка, почніть знову за пів хвилини.", here: "Ви тут: головний вхід", idle: "Торкніться мікрофона й говоріть зі мною своєю мовою.", start: "Почати розмову", stop: "Завершити розмову",
         connecting: "Підключення Ніи …", listening: "Я слухаю.", ended: "Розмову завершено.", noAvatar: "Аватар недоступний – голос працює.",
         demo: "Демо з вигаданими даними · Не є медичною консультацією · У разі надзвичайної ситуації зверніться до персоналу", ask: "Або введіть …", send: "Надіслати",
         hello: "Чим я можу допомогти?", tiles: [["🗓️", "Реєстрація", "У мене сьогодні прийом, я хочу зареєструватися."], ["🧭", "Знайти шлях", "Де радіологія?"],
@@ -98,7 +98,8 @@ function renderStatic() {
   $("demo-note").textContent = t("demo");
   $("question").placeholder = t("ask");
   $("send").textContent = t("send");
-  if (avatarLive && ws) setStatus(mic ? t("listening") : "");
+  if (avatarLive && ws) setStatus(mic ? (micMuted ? t("muted") : t("listening")) : "");
+  if (!$("mute").hidden) $("mute").textContent = micMuted ? t("unmute") : t("mute");
   renderClock();
 }
 
@@ -150,6 +151,7 @@ async function startSession() {
 
 function stopSession() {
   if (!ws) return;
+  showMute(false);
   const socket = ws;
   ws = null;
   socket.close();
@@ -183,7 +185,8 @@ document.querySelector(".logo").onclick = goHome;
 function startCapture() {
   if (!micSource || !ctx) return;
   const node = new AudioWorkletNode(ctx, "mic-capture", { numberOfInputs: 1, numberOfOutputs: 0, channelCount: 1, channelCountMode: "explicit" });
-  node.port.onmessage = (e) => ws?.readyState === WebSocket.OPEN && ws.send(e.data);
+  node.port.onmessage = (e) => ws?.readyState === WebSocket.OPEN && !micMuted && ws.send(e.data);
+  showMute(true);
   micSource.connect(node);
 }
 
@@ -241,7 +244,7 @@ function onAvatarLive() {
   avatarLive = true;
   clearTimeout(avatarTimer);
   $("avatar-frame").classList.add("live");
-  setStatus(mic ? t("listening") : "");
+  setStatus(mic ? (micMuted ? t("muted") : t("listening")) : "");
   ws?.send(JSON.stringify({ type: "avatar_ready", greet: !pendingText }));
   if (pendingText) { ws.send(JSON.stringify({ type: "text", text: pendingText })); pendingText = null; }
 }
@@ -406,3 +409,24 @@ function campusMap(locationId) {
   add("circle", { cx: kx, cy: ky, r: 9, class: "here" });
   return svg;
 }
+
+// ---------- Mute (presenter: button or key "M") ----------
+let micMuted = false;
+function setMuted(value) {
+  micMuted = value;
+  mic?.getAudioTracks().forEach((track) => { track.enabled = !value; });
+  const button = $("mute");
+  button.textContent = value ? t("unmute") : t("mute");
+  button.classList.toggle("on", value);
+  setStatus(value ? t("muted") : t("listening"));
+}
+function showMute(visible) {
+  const button = $("mute");
+  button.hidden = !visible;
+  if (!visible) { micMuted = false; button.classList.remove("on"); }
+  button.textContent = micMuted ? t("unmute") : t("mute");
+}
+$("mute").onclick = () => setMuted(!micMuted);
+document.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() === "m" && !e.target.closest("input, textarea") && !$("mute").hidden) setMuted(!micMuted);
+});

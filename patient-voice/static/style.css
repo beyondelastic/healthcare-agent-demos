@@ -183,3 +183,8 @@ details summary { cursor: pointer; font-size: 13.5px; color: var(--brand); margi
 .staff header button#fault.armed { background: #fff4e5; border-color: #e8a33d; color: #6b3d00; font-weight: 600; }
 .card .quote.stopped { color: #a33a2c; text-decoration: line-through; }
 .card.safety { border-left: 4px solid #e8a33d; }
+
+/* Presenter mute */
+.mute { border: 1px solid #b9dde7; background: #fff; color: #0b3a53; border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 14px; cursor: pointer; }
+.mute.on { background: #fff4e5; border-color: #e8a33d; color: #6b3d00; font-weight: 600; }
+.mute[hidden] { display: none; }
