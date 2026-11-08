@@ -20,11 +20,13 @@
   .\Test-Demos.ps1 -Only cockpit,avatar  # selected demos
 #>
 param(
-    [ValidateSet('cockpit', 'voice', 'avatar', 'research')]
     [string[]]$Only = @('cockpit', 'voice', 'avatar', 'research'),
     [switch]$LocalOnly
 )
 $ErrorActionPreference = 'Stop'
+$Only = @($Only | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim().ToLower() } | Where-Object { $_ })
+$unknown = $Only | Where-Object { $_ -notin 'cockpit', 'voice', 'avatar', 'research' }
+if ($unknown) { throw "Unknown demo(s): $($unknown -join ', '). Use cockpit, voice, avatar, research." }
 Set-Location $PSScriptRoot
 $env:PYTHONIOENCODING = 'utf-8'
 $env:PYTHONUNBUFFERED = '1'
