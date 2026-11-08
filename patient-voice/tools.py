@@ -86,15 +86,17 @@ def request_staff_callback(category, urgency, summary_de, patient_question, sess
     if not summary_de or not summary_de.strip():
         return {"ok": False, "message": "summary_de is required."}
     with _lock:
-        if urgency == "emergency":
-            # The rule may already have raised this emergency: complete that request instead of a duplicate.
+        if urgency in ("urgent", "emergency"):
+            # A rule may already have raised this (warning sign or emergency): complete that request
+            # instead of creating a duplicate, and keep the higher urgency.
             for request in reversed(REQUESTS):
-                if (request["session_id"] == session_id and request["urgency"] == "emergency"
+                if (request["session_id"] == session_id and request["category"] == "symptoms"
                         and request.get("origin") == "regel" and time.time() - request["created"] < 300):
                     request.update(summary_de=summary_de.strip(), origin="regel+agent",
+                                   urgency="emergency" if "emergency" in (urgency, request["urgency"]) else "urgent",
                                    patient_question=(patient_question or "").strip() or request["patient_question"])
-                    return {"ok": True, "request_id": request["id"], "urgency": urgency,
-                            "message": "Emergency already recorded for the clinical team (demo)."}
+                    return {"ok": True, "request_id": request["id"], "urgency": request["urgency"],
+                            "message": "Request already recorded for the clinical team (demo)."}
     return _add_request(session_id, category, urgency, summary_de.strip(), (patient_question or "").strip(), "agent")
 
 
@@ -124,6 +126,21 @@ def rule_emergency(session_id, term, patient_text) -> bool:
     return True
 
 
+def rule_warning(session_id, sign, patient_text) -> bool:
+    """A warning sign from the letter (e.g. fever over 38.5 °C) in the patient's words: urgent callback by rule.
+
+    Returns False if this session already has an open urgent or emergency symptom request.
+    """
+    with _lock:
+        if any(r["session_id"] == session_id and r["category"] == "symptoms" and r["status"] == "offen"
+               and r["urgency"] in ("urgent", "emergency") and time.time() - r["created"] < 300 for r in REQUESTS):
+            return False
+    _add_request(session_id, "symptoms", "urgent",
+                 f"Regel-Erkennung: Warnzeichen laut Entlassbrief ({sign}). Bitte Patientin dringend zurückrufen.",
+                 patient_text, "regel")
+    return True
+
+
 def record_safety_stop(session_id, problem, answer, patient_text) -> dict:
     """The app stopped an answer that didn't match the approved letter; the team reviews it."""
     return _add_request(session_id, "safety", "urgent",
@@ -136,6 +153,12 @@ def patient_text(session_id) -> str:
     with _lock:
         return " ".join(line["text"] for line in SESSIONS.get(session_id, {}).get("transcript", [])
                         if line["role"] == "patient")
+
+
+def last_patient_text(session_id) -> str:
+    with _lock:
+        lines = [line["text"] for line in SESSIONS.get(session_id, {}).get("transcript", []) if line["role"] == "patient"]
+    return lines[-1] if lines else ""
 
 
 def reset():

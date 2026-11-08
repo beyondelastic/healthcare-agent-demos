@@ -54,7 +54,9 @@ No single layer can guarantee this; the demo combines several independent ones:
    and the right drug ("Ramipril 10 mg" is a mix-up), and advice phrases ("Sie können … absetzen")
    are blocked. A violating answer is stopped, the patient sees a notice, the team gets a
    *Sicherheitsprüfung* request, and the agent answers again from the letter. Acute danger signs in
-   the patient's words show the 112 notice by rule, even if the model doesn't react.
+   the patient's words show the 112 notice by rule, and warning signs from the letter (fever over
+   38.5 °C, yellow skin or eyes, ongoing vomiting, red or leaking wound, increasing abdominal pain)
+   create an urgent callback by rule, even if the model doesn't call the tool.
 3. **Foundry guardrail** ([setup_guardrail.py](setup_guardrail.py), assigned to the agent through
    `rai_config`): content-harm controls, Prompt Shields (jailbreak, indirect attacks in tool
    results), Task Adherence (preview) on tool calls, and a custom blocklist with the same advice

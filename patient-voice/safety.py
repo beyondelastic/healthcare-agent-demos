@@ -126,3 +126,44 @@ def check_answer(answer: str, patient_text: str = "") -> dict | None:
 def detect_emergency(patient_text: str) -> str | None:
     text = _normalize(patient_text)
     return next((term for term in EMERGENCY_TERMS if term in text), None)
+
+
+# Warning signs from the letter ("Wiedervorstellung bei ..."): an urgent callback by rule.
+FEVER_WORDS = ["fieber", "temperatur", "fever", "temperature", "ateş", "ateşim", "sıcaklık", "حمى", "حرارة", "حرارتي",
+               "температура", "жар", "гарячка"]
+# Spelled-out temperatures of 38.5 °C and above, as speech transcription may write them.
+FEVER_SPELLED = ["achtunddreißig komma fünf", "achtunddreißig fünf", "neununddreißig", "vierzig", "einundvierzig",
+                 "thirty-eight point five", "thirty eight point five", "thirty-nine", "thirty nine", "forty",
+                 "hundred and one", "hundred and two", "hundred and three", "otuz sekiz buçuk", "otuz dokuz", "kırk",
+                 "тридцять дев", "сорок", "تسعة وثلاثين", "تسع وثلاثين", "تسعة وثلاثون", "أربعين", "اربعين"]
+HIGH_FEVER = ["hohes fieber", "high fever", "yüksek ateş", "حمى شديدة", "حرارة مرتفعة", "висока температура"]
+WARNING_SIGNS = {
+    "Gelbfärbung von Haut oder Augen": ["gelbe haut", "gelbe augen", "haut ist gelb", "augen sind gelb", "gelb geworden",
+                                        "yellow skin", "yellow eyes", "skin is yellow", "eyes are yellow", "turned yellow",
+                                        "sarı", "اصفرار", "жовт"],
+    "anhaltendes Erbrechen": ["erbreche", "muss ständig brechen", "übergebe mich", "keep vomiting", "vomiting", "throwing up",
+                              "kusuyorum", "kusma", "أتقيأ", "تقيؤ", "блюю", "блювота", "блювання"],
+    "Wunde gerötet, geschwollen oder nässend": ["wunde ist rot", "wunde rot", "wunde geschwollen", "wunde nässt", "wunde eitert",
+                                                "wunde eitrig", "wound is red", "wound is swollen", "wound is leaking", "pus coming",
+                                                "yara kızar", "yara şiş", "yarada iltihap", "الجرح أحمر", "الجرح منتفخ",
+                                                "рана червон", "рана опух", "гній"],
+    "zunehmende Bauchschmerzen": ["bauchschmerzen werden stärker", "bauchschmerzen werden schlimmer", "immer stärkere bauchschmerzen",
+                                  "zunehmende bauchschmerzen", "stomach pain is getting worse", "belly pain is getting worse",
+                                  "karın ağrım artıyor", "ألم البطن يزداد", "біль у животі посилюється"],
+}
+_NUMBER = re.compile(r"(\d{2,3}(?:[.,]\d)?)")
+
+
+def detect_warning(patient_text: str) -> str | None:
+    """Warning sign from the letter in the patient's words, e.g. fever over 38.5 °C. None if not found."""
+    text = _normalize(patient_text)
+    if any(word in text for word in FEVER_WORDS) or any(word in text for word in HIGH_FEVER):
+        values = [_number(n) for n in _NUMBER.findall(text)]
+        # Celsius 38.5-43, or Fahrenheit 101-110 (38.3 °C and above)
+        if (any(38.5 <= v <= 43 or 101 <= v <= 110 for v in values) or any(w in text for w in FEVER_SPELLED)
+                or any(w in text for w in HIGH_FEVER)):
+            return "Fieber über 38,5 °C"
+    for sign, words in WARNING_SIGNS.items():
+        if any(word in text for word in words):
+            return sign
+    return None

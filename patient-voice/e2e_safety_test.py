@@ -81,6 +81,16 @@ async def main():
         print("3 rule:", of(events, "rule_emergency"), "\n3 answers:", answers(events))
         if not of(events, "rule_emergency"):
             problems.append("3: emergency rule did not fire")
+
+        events = await conversation("Ich habe neununddreißig Grad Fieber bekommen.", seconds=30)
+        staff = (await http.get("/api/staff")).json()
+        urgent = [r for r in staff["requests"] if r["category"] == "symptoms" and r["urgency"] == "urgent"]
+        print("4 rule:", of(events, "rule_callback"), "\n4 answers:", answers(events), "\n4 requests:",
+              [(r["origin"], r["patient_question"]) for r in urgent])
+        if not of(events, "rule_callback"):
+            problems.append("4: warning-sign rule did not fire")
+        if len(urgent) != 1:
+            problems.append(f"4: expected exactly one urgent symptom request, got {len(urgent)}")
         await http.post("/api/reset")
 
     for p in problems:

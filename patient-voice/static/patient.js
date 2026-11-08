@@ -49,7 +49,7 @@ const UI = {
 const NAMES = { de: "Deutsch", en: "English", tr: "Türkçe", ar: "العربية", uk: "Українська" };
 
 let lang = "de", letter = null, ws = null, ctx = null, mic = null, micSource = null, micMeter = null, voiceMeter = null;
-let emergencyShown = false, medicationCardShown = false, pendingCard = null, readyCard = null;
+let emergencyShown = false, urgentShown = false, medicationCardShown = false, pendingCard = null, readyCard = null;
 let voiceBus = null, playTime = 0, playing = [], muted = false, pendingSources = [], readySources = [], queuedText = null, withMic = false;
 
 const t = (key) => UI[lang][key];
@@ -188,6 +188,7 @@ function onEvent(msg) {
     case "guard": stopPlayback(); muted = true; notice("guard", t("guard"), t("guardText")); break;
     case "guard_final": notice("guard", t("guard"), t("guardFinal")); break;
     case "rule_emergency": if (!emergencyShown) { emergencyShown = true; notice("emergency", t("emergency"), t("emergencyText")); } break;
+    case "rule_callback": if (!urgentShown && !emergencyShown) { urgentShown = true; notice("urgent", t("callback"), t("callbackText")); } break;
     case "interrupt": stopPlayback(); muted = true; break;
     // Sources belong to the reply that follows the tool call, not to the "let me check" preamble.
     case "response_started":
@@ -208,7 +209,9 @@ function onTool(msg) {
     const urgency = msg.args.urgency;
     if (urgency === "emergency") {
       if (!emergencyShown) { emergencyShown = true; notice("emergency", t("emergency"), t("emergencyText")); }
-    } else notice(urgency === "urgent" ? "urgent" : "callback", t("callback"), t("callbackText"));
+    } else if (urgency === "urgent") {
+      if (!urgentShown && !emergencyShown) { urgentShown = true; notice("urgent", t("callback"), t("callbackText")); }
+    } else notice("callback", t("callback"), t("callbackText"));
   }
 }
 

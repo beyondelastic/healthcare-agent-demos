@@ -259,6 +259,11 @@ async def on_patient_text(browser: WebSocket, state: dict, text: str):
     if term and tools.rule_emergency(state["session"], term, text):
         print(f"Safety rule: emergency term '{term}'")
         await browser.send_json({"type": "rule_emergency", "term": term})
+    elif not term:
+        sign = safety.detect_warning(text)
+        if sign and tools.rule_warning(state["session"], sign, text):
+            print(f"Safety rule: warning sign '{sign}'")
+            await browser.send_json({"type": "rule_callback", "sign": sign})
 
 
 async def stop_answer(agent, browser: WebSocket, state: dict, problem: dict):
@@ -268,7 +273,7 @@ async def stop_answer(agent, browser: WebSocket, state: dict, problem: dict):
     await browser.send_json({"type": "guard", "rule": problem["rule"], "reason": problem["reason"]})
     if state["response_active"]:
         await agent.response.cancel()
-    tools.record_safety_stop(state["session"], problem, state["answer"], tools.patient_text(state["session"]))
+    tools.record_safety_stop(state["session"], problem, state["answer"], tools.last_patient_text(state["session"]))
 
 
 def correction_prompt(problem: dict) -> str:

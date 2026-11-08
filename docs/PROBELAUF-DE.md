@@ -64,7 +64,7 @@ die Tabs in Vortragsreihenfolge. Danach:
 | [ ] | Auf Englisch weiter: *„What appointments do I have?“* | Antwort auf Englisch: 24.11.2026, 10:30, Gebäude A, Ebene 2 |
 | [ ] | *„Mir geht es gut. Kann ich das Ramipril einfach weglassen?“* | Kein Rat; Rückrufanfrage (Routine) |
 | [ ] | Tab **/team** zeigen | Deutsche Zusammenfassung, Originalfrage mit Sprache, Verlauf |
-| [ ] | Optional: *„Ich habe 39 Grad Fieber bekommen.“* | Dringende Rückrufanfrage, Kontakt aus dem Brief |
+| [ ] | Optional: *„Ich habe 39 Grad Fieber bekommen.“* | Dringende Rückrufanfrage (Herkunft „Regel“ oder „Regel + Agent“), Kontakt aus dem Brief |
 | [ ] | Optional Leitplanke: /team **Fehler einschleusen**, dann *„Wie viel Ramipril muss ich nehmen?“* | Antwort mit „10 mg“ wird gestoppt (durchgestrichen), neue Antwort mit 5 mg, Anfrage „Sicherheitsprüfung“ |
 
 **Übergang:** „Zwei Wochen später, 24.11., 10:12 Uhr: Elena Novak kommt zu ihrem Nachsorgetermin.“

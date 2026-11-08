@@ -77,7 +77,42 @@ def test_emergency_terms_are_detected_in_five_languages(text):
 
 def test_no_emergency_for_ordinary_questions():
     assert safety.detect_emergency("Welche Tabletten muss ich wann nehmen?") is None
-    assert safety.detect_emergency("Ich habe 39 Grad Fieber.") is None  # urgent, but handled by the agent
+    assert safety.detect_emergency("Ich habe 39 Grad Fieber.") is None  # urgent, handled by the warning rule
+
+
+@pytest.mark.parametrize("text", [
+    "Ich habe neununddreißig Grad Fieber bekommen.", "Ich habe 39 Grad Fieber.", "Fieber 38,7", "I have a fever of 39.",
+    "I have a fever of 102 degrees", "Ateşim 39 derece.", "У мене температура 39 градусів.", "عندي حمى ٣٩ درجة",
+    "Ich habe hohes Fieber.", "Meine Augen sind gelb geworden.", "Die Wunde ist rot und geschwollen.", "I keep vomiting.",
+])
+def test_warning_signs_from_the_letter_are_detected(text):
+    assert safety.detect_warning(text)
+
+
+@pytest.mark.parametrize("text", [
+    "Welche Tabletten muss ich wann nehmen?", "Ab wie viel Fieber soll ich mich melden?", "Ich habe 37,8 Grad Temperatur.",
+    "Kann ich weiter Ramipril nehmen?", "Wann ist mein Termin am 24.11.?", "Darf ich duschen?",
+])
+def test_no_warning_for_ordinary_questions(text):
+    assert safety.detect_warning(text) is None
+
+
+def test_warning_rule_is_merged_with_the_agent_callback():
+    session = tools.start_session("de")
+    assert tools.rule_warning(session, "Fieber über 38,5 °C", "Ich habe 39 Grad Fieber")
+    assert not tools.rule_warning(session, "Fieber über 38,5 °C", "immer noch 39")
+    result = tools.run_tool("request_staff_callback", {"category": "symptoms", "urgency": "urgent",
+                                                       "summary_de": "Fieber 39 °C", "patient_question": "39 Grad"}, session)
+    requests = tools.staff_view()["requests"]
+    assert result["ok"] and len(requests) == 1
+    assert requests[0]["origin"] == "regel+agent" and requests[0]["urgency"] == "urgent"
+
+
+def test_safety_stop_shows_only_the_last_question():
+    session = tools.start_session("de")
+    tools.log(session, "patient", "Welche Tabletten?")
+    tools.log(session, "patient", "Wie viel Ramipril muss ich nehmen?")
+    assert tools.last_patient_text(session) == "Wie viel Ramipril muss ich nehmen?"
 
 
 def test_rule_emergency_is_recorded_once_and_merged_with_the_agent_callback():
