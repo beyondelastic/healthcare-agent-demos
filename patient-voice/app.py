@@ -276,12 +276,13 @@ async def stop_answer(agent, browser: WebSocket, state: dict, problem: dict):
     tools.record_safety_stop(state["session"], problem, state["answer"], tools.last_patient_text(state["session"]))
 
 
-def correction_prompt(problem: dict) -> str:
+def correction_prompt(problem: dict, last_question: str) -> str:
     return ("SAFETY CHECK: the app stopped your last answer because it did not match the approved letter "
             f"({problem['reason']}). Do not repeat that statement. Call get_discharge_information again for the "
-            "relevant section, then answer briefly using only the exact drug names and doses from the letter, in "
-            "the language of the patient's most recent message. Say that the care team has been informed and will "
-            "call back about the medication.")
+            "relevant section, then answer briefly using only the exact drug names and doses from the letter. "
+            f"The patient's most recent message was: \"{last_question}\". Answer in exactly the same language as that "
+            "message (not the language of these instructions or of earlier messages). Say that the care team has been "
+            "informed and will call back about the medication.")
 
 
 async def agent_to_browser(agent, browser: WebSocket, state: dict):
@@ -343,7 +344,8 @@ async def agent_to_browser(agent, browser: WebSocket, state: dict):
                 pending_outputs.clear()
                 state["corrections"] += 1
                 if state["corrections"] <= 1:
-                    await agent.conversation.item.create(item=system_item(correction_prompt(problem)))
+                    await agent.conversation.item.create(item=system_item(
+                        correction_prompt(problem, tools.last_patient_text(state["session"]))))
                     state["respond_after"] = True
                 else:
                     await browser.send_json({"type": "guard_final"})

@@ -20,10 +20,12 @@ import websockets
 BASE = "127.0.0.1:8010"
 
 
-async def conversation(question: str, seconds: float = 45) -> list[dict]:
+async def conversation(question, seconds: float = 45, arm_fault_before_last=None) -> list[dict]:
+    """Send one or more questions in one session; each follows the previous answer (an answer with a number)."""
+    questions = [question] if isinstance(question, str) else list(question)
     events = []
     async with websockets.connect(f"ws://{BASE}/ws?lang=de&greet=0", max_size=None) as ws:
-        sent, end = False, time.time() + seconds
+        index, mark, end = 0, 0, time.time() + seconds
         while time.time() < end:
             try:
                 raw = await asyncio.wait_for(ws.recv(), timeout=max(0.1, end - time.time()))
@@ -33,12 +35,17 @@ async def conversation(question: str, seconds: float = 45) -> list[dict]:
                 continue
             event = json.loads(raw)
             events.append(event)
-            if event.get("type") == "status" and event.get("text") == "connected" and not sent:
-                await ws.send(json.dumps({"type": "text", "text": question}))
-                sent = True
-            answers = [e for e in events if e.get("type") == "transcript" and e.get("role") == "assistant"
-                       and not e.get("stopped")]
-            if answers and any(ch.isdigit() for ch in answers[-1]["text"]) and len(answers) >= 2:
+            ready = event.get("type") == "status" and event.get("text") == "connected" and index == 0
+            recent = [e for e in events[mark:] if e.get("type") == "transcript" and e.get("role") == "assistant"
+                      and not e.get("stopped")]
+            answered = index > 0 and recent and any(ch.isdigit() for ch in recent[-1]["text"]) and len(recent) >= 2
+            if ready or (answered and index < len(questions)):
+                if index == len(questions) - 1 and arm_fault_before_last:
+                    await arm_fault_before_last()
+                await asyncio.sleep(1 if index else 0)
+                await ws.send(json.dumps({"type": "text", "text": questions[index]}))
+                index, mark = index + 1, len(events)
+            elif answered and index == len(questions):
                 await asyncio.sleep(2)
                 break
     return events
@@ -64,11 +71,15 @@ async def main():
         if of(events, "guard"):
             problems.append(f"1: unexpected stop {of(events, 'guard')}")
 
-        await http.post("/api/demo/fault")
-        events = await conversation("Wie viel Ramipril muss ich nehmen?", seconds=70)
+        # As in the presenter script: an English question earlier, then the German one with the injected fault.
+        events = await conversation(["What appointments do I have?", "Wie viel Ramipril muss ich nehmen?"],
+                                    seconds=110, arm_fault_before_last=lambda: http.post("/api/demo/fault"))
         guard = of(events, "guard")
         final = [e["text"] for e in of(events, "transcript") if e.get("role") == "assistant" and not e.get("stopped")]
         print("2 guard:", guard, "\n2 answers:", answers(events))
+        corrected = final[-1] if final else ""
+        if any(word in corrected.lower() for word in (" the ", "letter", " says ", "your ")):
+            problems.append(f"2: corrected answer is not in German: {corrected}")
         if not guard or guard[0]["rule"] != "verwechslung":
             problems.append("2: wrong dose was not stopped")
         if not any("5" in a and "10" not in a for a in final):
