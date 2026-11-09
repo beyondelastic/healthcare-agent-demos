@@ -102,6 +102,14 @@ async def main():
             problems.append("4: warning-sign rule did not fire")
         if len(urgent) != 1:
             problems.append(f"4: expected exactly one urgent symptom request, got {len(urgent)}")
+
+        # Language switch back: English question, then German again -> the answer must be German.
+        events = await conversation(["Which appointments do I have?",
+                                     "Mir geht es wieder ganz gut. Kann ich das Ramipril einfach weglassen?"], seconds=110)
+        last = answers(events)[-1] if answers(events) else ""
+        print("5 answers:", answers(events))
+        if any(word in f" {last.lower()} " for word in (" the ", " you ", " your ", " letter ")):
+            problems.append(f"5: answer did not switch back to German: {last}")
         await http.post("/api/reset")
 
     for p in problems:

@@ -41,6 +41,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.websockets import WebSocketState
 
 import safety
+from language import detect_language
 import settings
 import tools
 
@@ -158,7 +159,7 @@ async def voice_session(browser: WebSocket):
     session_id = tools.start_session(language)
     client: AIProjectClient = app.state.client
     state = {"response_active": False, "respond_after": False, "session": session_id,
-             "answer": "", "stopped": None, "corrections": 0}
+             "answer": "", "stopped": None, "corrections": 0, "answer_language": language}
     reconnects = 0
     try:
         await browser.send_json({"type": "config", "channels": 1, "session": session_id})
@@ -241,20 +242,30 @@ async def browser_to_agent(browser: WebSocket, agent, state: dict):
         if data.get("type") == "text" and data.get("text", "").strip():
             text = data["text"].strip()[:1000]
             tools.log(state["session"], "patient", text, channel="text")
-            await on_patient_text(browser, state, text)
+            await on_patient_text(browser, state, text, agent)
             await agent.conversation.item.create(item=RealtimeConversationItemMessageUser(
                 content=[RealtimeConversationItemMessageUserContent(type="input_text", text=text)]))
             await request_response(agent, state)
         elif data.get("type") == "language" and data.get("code") in settings.LANGUAGES:
             tools.set_language(state["session"], data["code"])
+            state["answer_language"] = data["code"]
             await agent.conversation.item.create(item=system_item(
                 language_context(data["code"]) + " Briefly confirm the language change in one sentence."))
             await request_response(agent, state)
 
 
-async def on_patient_text(browser: WebSocket, state: dict, text: str):
+async def on_patient_text(browser: WebSocket, state: dict, text: str, agent=None):
     """Rule-based checks on the patient's words, independent of the model."""
     state["corrections"] = 0
+    spoken = detect_language(text)
+    if agent is not None and spoken and spoken != state.get("answer_language"):
+        state["answer_language"] = spoken
+        tools.set_language(state["session"], spoken)
+        name = settings.LANGUAGES[spoken][0]
+        print(f"Language switch: patient now speaks {name}")
+        await agent.conversation.item.create(item=system_item(
+            f"LANGUAGE: The patient's latest message is in {name}. Answer in {name} from now on (also for any "
+            f"answer you are giving right now), until the patient switches language again."))
     term = safety.detect_emergency(text)
     if term and tools.rule_emergency(state["session"], term, text):
         print(f"Safety rule: emergency term '{term}'")
@@ -307,7 +318,7 @@ async def agent_to_browser(agent, browser: WebSocket, state: dict):
             text = (event.transcript or "").strip()
             tools.log(state["session"], "patient", text)
             await browser.send_json({"type": "transcript", "role": "patient", "text": text})
-            await on_patient_text(browser, state, text)
+            await on_patient_text(browser, state, text, agent)
 
         elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDelta):
             state["answer"] += event.delta or ""
