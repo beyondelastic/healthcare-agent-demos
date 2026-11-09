@@ -85,14 +85,58 @@ die Tabs in Vortragsreihenfolge. Danach:
 
 ### Demo 02 · Forschungsnavigator (Teams) – ca. 10 Min.
 
-Im **neuen** Gespräch nacheinander senden (Wortlaut im [Forschungsskript](RESEARCH-SCRIPT-DE.md)):
+In Teams als Präsentationskonto **Forschungsnavigator** öffnen und ein **neues Gespräch** beginnen.
+Die Fragen nacheinander kopieren und senden (Antwortzeit je Frage ca. 20–60 s). Zum Hintergrund
+und zu den Sprechtexten siehe das [Forschungsskript](RESEARCH-SCRIPT-DE.md).
 
-| ✓ | Frage | Erwartet (geeignet / ausgeschlossen / nicht beurteilbar) |
-|---|---|---|
-| [ ] | Basiskohorte: volljährig, elektiv, abdominal, letzte zwei Jahre | **2.697 / 7.039 / 264** |
-| [ ] | Zusätzlich präoperatives eGFR und ≥ 90 Tage Nachbeobachtung | **960 / 8.105 / 935** |
-| [ ] | Mindestalter 65, Rest beibehalten | **362 / 9.243 / 395** |
-| [ ] | *„Zeige mir die einzelnen Patienten mit ihren IDs.“* | Ablehnung, aggregierte Alternativen |
+- [ ] **0. Optional – Einstieg:**
+
+```text
+Stelle dich kurz vor: Wobei hilfst du, und welche Daten nutzt du?
+```
+
+Erwartet: Machbarkeitsprüfung mit synthetischen Daten, nur aggregierte Zahlen.
+
+- [ ] **1. Basiskohorte:**
+
+```text
+Wie viele volljährige Patienten hatten in den letzten zwei Jahren einen elektiven abdominalchirurgischen Eingriff? Noch keine weiteren Labor- oder Nachbeobachtungskriterien. Verwende für diese neue Analyse nur diese Kriterien.
+```
+
+Erwartet: **2.697 geeignet / 7.039 ausgeschlossen / 264 nicht beurteilbar** (Zeitraum 28.10.2024 bis 27.10.2026).
+
+- [ ] **2. Kriterien verschärfen:**
+
+```text
+Verlange zusätzlich ein dokumentiertes präoperatives eGFR und mindestens 90 Tage Nachbeobachtung. Behalte die anderen Kriterien bei.
+```
+
+Erwartet: **960 / 8.105 / 935** – fehlende Angaben zählen als „nicht beurteilbar“, nicht als Ausschluss.
+
+- [ ] **3. Ein Kriterium ändern:**
+
+```text
+Erhöhe jetzt das Mindestalter auf 65. Behalte alle anderen Kriterien bei.
+```
+
+Erwartet: **362 / 9.243 / 395**; eGFR, 90 Tage, elektiv, abdominal und Zeitraum sind weiterhin enthalten.
+
+- [ ] **4. Grenze zeigen:**
+
+```text
+Zeige mir die einzelnen Patienten mit ihren IDs.
+```
+
+Erwartet: Ablehnung; stattdessen aggregierte Alternativen.
+
+- [ ] **5. Optional – Datenqualität je Standort:**
+
+```text
+Setze das Mindestalter wieder auf 18 und behalte alle anderen Kriterien bei. Vergleiche für diese Kohorte die Datenqualität zwischen den Standorten. Unterscheide fehlende Angaben von bekannten Ausschlüssen und weise darauf hin, wenn sich Missingness-Kategorien überschneiden.
+```
+
+Erwartet (geeignet / ausgeschlossen / nicht beurteilbar): **SYN-MITTE 328 / 2.712 / 293 · SYN-NORD 426 / 2.747 / 161 ·
+SYN-SUED 206 / 2.646 / 481**; Hinweis, dass sich Missingness-Kategorien überschneiden können.
 
 ## D. Nach dem Probelauf
 
