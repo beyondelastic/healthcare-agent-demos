@@ -106,10 +106,15 @@ async def main():
         # Language switch back: English question, then German again -> the answer must be German.
         events = await conversation(["Which appointments do I have?",
                                      "Mir geht es wieder ganz gut. Kann ich das Ramipril einfach weglassen?"], seconds=110)
-        last = answers(events)[-1] if answers(events) else ""
-        print("5 answers:", answers(events))
-        if any(word in f" {last.lower()} " for word in (" the ", " you ", " your ", " letter ")):
-            problems.append(f"5: answer did not switch back to German: {last}")
+        assistant = [e["text"] for e in events if e.get("type") == "transcript" and e.get("role") == "assistant"]
+        english_answer = max((i for i, text in enumerate(assistant) if "24.11" in text), default=-1)
+        after = assistant[english_answer + 1:]
+        if english_answer < 0 or not after:
+            problems.append("5: conversation incomplete (no English appointment answer or no answer after it)")
+        print("5 answers after the switch back:", after)
+        for text in after:  # every answer after the switch, including any short acknowledgement
+            if any(word in f" {text.lower()} " for word in (" the ", " you ", " your ", " letter ", " i'll ", " i’ll ")):
+                problems.append(f"5: answer did not switch back to German: {text}")
         await http.post("/api/reset")
 
     for p in problems:

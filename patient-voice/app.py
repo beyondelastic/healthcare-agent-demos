@@ -266,6 +266,13 @@ async def on_patient_text(browser: WebSocket, state: dict, text: str, agent=None
         await agent.conversation.item.create(item=system_item(
             f"LANGUAGE: The patient's latest message is in {name}. Answer in {name} from now on (also for any "
             f"answer you are giving right now), until the patient switches language again."))
+        if state["response_active"]:
+            # Spoken input: the answer already started (in the old language) before the transcript arrived.
+            # Stop it, hide its fragment, and start again in the new language.
+            await browser.send_json({"type": "interrupt"})
+            state["drop_transcript"] = True
+            await agent.response.cancel()
+            state["respond_after"] = True
     term = safety.detect_emergency(text)
     if term and tools.rule_emergency(state["session"], term, text):
         print(f"Safety rule: emergency term '{term}'")
@@ -329,6 +336,10 @@ async def agent_to_browser(agent, browser: WebSocket, state: dict):
 
         elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
             stopped = state["stopped"]
+            if state.get("drop_transcript"):
+                # Fragment of an answer restarted for a language switch: keep it out of the chat.
+                tools.log(state["session"], "assistant", "[NEU GESTARTET: Sprachwechsel] " + (event.transcript or ""))
+                continue
             tools.log(state["session"], "assistant", ("[GESTOPPT] " if stopped else "") + (event.transcript or ""))
             await browser.send_json({"type": "transcript", "role": "assistant", "text": event.transcript,
                                      "stopped": bool(stopped)})
@@ -350,6 +361,7 @@ async def agent_to_browser(agent, browser: WebSocket, state: dict):
 
         elif isinstance(event, RealtimeServerEventResponseDone):
             state["response_active"] = False
+            state["drop_transcript"] = False
             if state["stopped"]:
                 problem, state["stopped"] = state["stopped"], None
                 pending_outputs.clear()
