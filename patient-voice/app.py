@@ -257,6 +257,8 @@ async def browser_to_agent(browser: WebSocket, agent, state: dict):
 async def on_patient_text(browser: WebSocket, state: dict, text: str, agent=None):
     """Rule-based checks on the patient's words, independent of the model."""
     state["corrections"] = 0
+    state["language_restarts"] = 0
+    state["awaiting_transcript"] = False
     spoken = detect_language(text)
     if agent is not None and spoken and spoken != state.get("answer_language"):
         state["answer_language"] = spoken
@@ -282,6 +284,31 @@ async def on_patient_text(browser: WebSocket, state: dict, text: str, agent=None
         if sign and tools.rule_warning(state["session"], sign, text):
             print(f"Safety rule: warning sign '{sign}'")
             await browser.send_json({"type": "rule_callback", "sign": sign})
+
+
+async def check_answer_language(agent, browser: WebSocket, state: dict):
+    """The model sometimes drifts back to an earlier language. Once the first words of an answer show the
+    language, compare it with the patient's; if it differs, stop the answer and start it again once."""
+    if state.get("language_checked") or state.get("awaiting_transcript") or len(state["answer"]) < 25:
+        return
+    said = detect_language(state["answer"])
+    if said is None and len(state["answer"]) < 120:
+        return
+    state["language_checked"] = True
+    wanted = state.get("answer_language")
+    if not said or not wanted or said == wanted or state.get("language_restarts", 0) >= 1:
+        return
+    state["language_restarts"] = state.get("language_restarts", 0) + 1
+    name = settings.LANGUAGES[wanted][0]
+    print(f"Language guard: answer started in {said}, patient speaks {wanted}; restarting")
+    await browser.send_json({"type": "interrupt"})
+    state["drop_transcript"] = True
+    await agent.conversation.item.create(item=system_item(
+        f"LANGUAGE: Your last answer was in the wrong language and was not delivered. The patient speaks {name}. "
+        f"Answer the patient's most recent message again, entirely in {name}."))
+    if state["response_active"]:
+        await agent.response.cancel()
+    state["respond_after"] = True
 
 
 async def stop_answer(agent, browser: WebSocket, state: dict, problem: dict):
@@ -314,22 +341,27 @@ async def agent_to_browser(agent, browser: WebSocket, state: dict):
         elif isinstance(event, RealtimeServerEventResponseCreated):
             state["response_active"] = True
             state["answer"], state["stopped"] = "", None
+            state["language_checked"] = False
             await browser.send_json({"type": "response_started"})
 
         elif isinstance(event, RealtimeServerEventInputAudioBufferSpeechStarted):
+            state["awaiting_transcript"] = True
             await browser.send_json({"type": "interrupt"})
             if state["response_active"]:
                 await agent.response.cancel()
 
         elif isinstance(event, RealtimeServerEventConversationItemInputAudioTranscriptionCompleted):
             text = (event.transcript or "").strip()
+            state["awaiting_transcript"] = False
             tools.log(state["session"], "patient", text)
             await browser.send_json({"type": "transcript", "role": "patient", "text": text})
             await on_patient_text(browser, state, text, agent)
 
         elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDelta):
             state["answer"] += event.delta or ""
-            if not state["stopped"]:
+            if not state["stopped"] and not state.get("drop_transcript"):
+                await check_answer_language(agent, browser, state)
+            if not state["stopped"] and not state.get("drop_transcript"):
                 problem = safety.check_answer(state["answer"], tools.patient_text(state["session"]))
                 if problem:
                     await stop_answer(agent, browser, state, problem)
